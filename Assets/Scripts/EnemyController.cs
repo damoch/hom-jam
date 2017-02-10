@@ -2,71 +2,119 @@
 using System.Collections;
 using System.Collections.Generic;
 using Pathfinding;
+using UnityEditor;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    //The point to move to
+
     public Transform target;
+    private Seeker seeker;  
+    public Path path;   
+    public float speed;
+    public float ShootingTimeSpan;
+    public float nextWaypointDistance; 
+    private int currentWaypoint;
+    
+    private float speedTemp;
+    private bool canShoot;
+    private bool enemyInRange;
 
-    private Seeker seeker;
-
-    //The calculated path
-    public Path path;
-
-    //The AI's speed per second
-    public float speed = 2;
-
-    //The max distance from the AI to a waypoint for it to continue to the next waypoint
-    public float nextWaypointDistance = 3;
-
-    //The waypoint we are currently moving towards
-    private int currentWaypoint = 0;
-
-    public void Start()
+    void Start()
     {
+        enemyInRange = false;
+        canShoot = true;
+        currentWaypoint = 0;
         seeker = GetComponent<Seeker>();
+        GoToPoint(target.transform.position);
+        speedTemp = speed;
 
-        //Start a new path to the targetPosition, return the result to the OnPathComplete function
-        seeker.StartPath(transform.position, target.position, OnPathComplete);
+        if (target == null)
+        {
+            target = GameObject.FindGameObjectWithTag("Player").transform;
+        }
     }
 
-    public void OnPathComplete(Path p)
+    void OnPathComplete(Path p)
     {
-        Debug.Log("Yay, we got a path back. Did it have an error? " + p.error);
         if (!p.error)
         {
             path = p;
-            //Reset the waypoint counter
             currentWaypoint = 0;
         }
     }
 
-    public void FixedUpdate()
+    void Update()
     {
+        if (enemyInRange && canShoot)
+        {
+            StartCoroutine("ShootBullet");
+        }
+
         if (path == null)
         {
-            //We have no path to move after yet
             return;
         }
 
         if (currentWaypoint >= path.vectorPath.Count)
         {
-            Debug.Log("End Of Path Reached");
+            if(Vector2.Distance(transform.position,target.transform.position)> 1)
+            GoToPoint(target.transform.position);
             return;
         }
 
-        //Direction to the next waypoint
         Vector3 dir = (path.vectorPath[currentWaypoint] - transform.position).normalized;
         dir *= speed * Time.fixedDeltaTime;
         this.gameObject.transform.Translate(dir);
 
-        //Check if we are close enough to the next waypoint
-        //If we are, proceed to follow the next waypoint
         if (Vector3.Distance(transform.position, path.vectorPath[currentWaypoint]) < nextWaypointDistance)
         {
             currentWaypoint++;
             return;
         }
+        
+    }
+
+    void FaceEnemy()
+    {
+        var dir = target.transform.position - transform.position;
+        var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+    }
+
+    void GoToPoint(Vector2 point)
+    {
+        seeker.StartPath(transform.position, point, OnPathComplete);
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag.Equals("Player"))
+        {
+            enemyInRange = true;
+            speed = 0;
+            FaceEnemy();
+            //StartCoroutine(shootingHandle);
+        }
+
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.tag.Equals("Player"))
+        {
+            enemyInRange = false;
+            speed = speedTemp;
+            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            GoToPoint(target.transform.position);
+        }
+    }
+
+    IEnumerator ShootBullet()
+    {
+        canShoot = false;
+        Debug.Log("New bullet");
+        yield return new WaitForSeconds(ShootingTimeSpan);
+        canShoot = true;
     }
 }
