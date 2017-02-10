@@ -21,11 +21,6 @@ public class HealthPack : MonoBehaviour {
         gameManager.MoveToPlayer(gameObject, force);
     }
 
-    private void Update()
-    {
-        Debug.Log(gameObject.transform.position);
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Player")

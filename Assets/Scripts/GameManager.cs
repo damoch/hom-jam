@@ -6,7 +6,12 @@ using System;
 public class GameManager : MonoBehaviour {
     static GameManager gameManager = null;
 
-    public Player player;
+    private PlayerControler player;
+
+    private void Awake()
+    {
+        player = GameObject.FindObjectOfType<PlayerControler>();
+    }
 
     private void Start()
     {
@@ -23,12 +28,12 @@ public class GameManager : MonoBehaviour {
 
     public void IncreasePlayerHealth(int num)
     {
-        player.health += num;
+        player.healthPoints += num;
     }
 
-    public static void DecreasePlayerHealth(int num)
+    public void DecreasePlayerHealth(int num)
     {
-        player.health -= num;
+        player.healthPoints -= num;
     }
 
     public void LookAtPlayer(GameObject obj)

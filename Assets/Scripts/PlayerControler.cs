@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PlayerControler : MonoBehaviour
 {
-    private float speed;
-    private int healthPoints;
-    private int maxHealthPoints;
+    public float speed;
+    public int healthPoints;
+    public int maxHealthPoints;
     private float moveX;
     private float moveY;
     public Rigidbody2D rigidboy;
