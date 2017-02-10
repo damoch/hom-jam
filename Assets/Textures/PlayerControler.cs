@@ -2,34 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class PlayerControler : MonoBehaviour
 {
-    private int speed;
+    private float speed;
     private int healthPoints;
     private int maxHealthPoints;
+    private float moveX;
+    private float moveY;
+    public Rigidbody2D rigidboy;
+    private Vector2 mousePosition;
 
 
-    public static readonly string LEFT = KeyCode.A.ToString();
-    public static readonly string RIGHT = KeyCode.A.ToString();
-    public static readonly string UP = KeyCode.A.ToString();
-    public static readonly string DOWN = KeyCode.A.ToString();
+    public static readonly KeyCode LEFT = KeyCode.A;
+    public static readonly KeyCode RIGHT = KeyCode.A;
+    public static readonly KeyCode UP = KeyCode.A;
+    public static readonly KeyCode DOWN = KeyCode.A;
 
-    public static readonly string ACTION = KeyCode.A.ToString();
+    public static readonly KeyCode ACTION = KeyCode.A;
 
 
 
     // Use this for initialization
     void Start()
     {
-        speed = 5;
+        speed = 10f;
         healthPoints = 50;
         maxHealthPoints = 200;
+        rigidboy = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
         onKeyInput();
+        changePlayerLookingDirection();
+
+        moveX = Input.GetAxis("Horizontal");
+        moveY = Input.GetAxis("Vertical");
+
+        rigidboy.velocity = new Vector2(moveX * speed, moveY * speed);
+  
     }
 
     private void onKeyInput()
@@ -54,30 +66,34 @@ public class NewBehaviourScript : MonoBehaviour
     private void onMoveLeft()
     {
         // TODO: ruch w lewo implementacja 
-        Debug.Log("Gracz nacinal przycisk [A]");
     }
 
     private void onMoveRight()
     {
         // TODO: ruch w prawo implementacja
-        Debug.Log("Gracz nacinal przycisk [D]");
     }
 
     private void onMoveUp()
     {
         // TODO: ruch w gore implementacja
-        Debug.Log("Gracz nacinal przycisk [W]");
     }
 
     private void onMoveDown()
     {
         // TODO: ruch w dol implementacja
-        Debug.Log("Gracz nacinal przycisk [S]");
+        
     }
 
     private void onPlayerAction()
     {
         // TODO: jakies strzelanie, wykonanie akcji
-        Debug.Log("Gracz nacinal przycisk [SPACE]");
     }
+
+    private void changePlayerLookingDirection()
+    {
+        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 direction = (mousePosition - (Vector2)transform.position).normalized;
+        transform.up = direction;
+    }
+
 }
