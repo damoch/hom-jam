@@ -7,12 +7,13 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-
+    public GameObject Bullet;
     public Transform target;
     private Seeker seeker;  
     public Path path;   
     public float speed;
-    public float ShootingTimeSpan;
+    public float ShootingTimeMin;
+    public float ShootingTimeMax;
     public float nextWaypointDistance; 
     private int currentWaypoint;
     
@@ -26,13 +27,16 @@ public class EnemyController : MonoBehaviour
         canShoot = true;
         currentWaypoint = 0;
         seeker = GetComponent<Seeker>();
-        GoToPoint(target.transform.position);
         speedTemp = speed;
 
         if (target == null)
         {
             target = GameObject.FindGameObjectWithTag("Player").transform;
         }
+
+        GoToPoint(target.transform.position);
+        Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(),
+            target.gameObject.GetComponent<BoxCollider2D>());
     }
 
     void OnPathComplete(Path p)
@@ -53,7 +57,7 @@ public class EnemyController : MonoBehaviour
 
         if (path == null)
         {
-            return;
+            //return;
         }
 
         if (currentWaypoint >= path.vectorPath.Count)
@@ -93,7 +97,6 @@ public class EnemyController : MonoBehaviour
         {
             enemyInRange = true;
             speed = 0;
-            FaceEnemy();
             //StartCoroutine(shootingHandle);
         }
 
@@ -113,8 +116,11 @@ public class EnemyController : MonoBehaviour
     IEnumerator ShootBullet()
     {
         canShoot = false;
+        FaceEnemy();
         Debug.Log("New bullet");
-        yield return new WaitForSeconds(ShootingTimeSpan);
+        Instantiate(Bullet, transform.position,transform.rotation);
+        float timeSpan = UnityEngine.Random.Range(ShootingTimeMin, ShootingTimeMax);
+        yield return new WaitForSeconds(timeSpan);
         canShoot = true;
     }
 }

@@ -37,6 +37,10 @@ public class BulletScript : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D Other)
     {
-        Destroy(gameObject);
+        if (Other.tag.Equals("Player"))
+        {
+
+            Destroy(gameObject);
+        }
     }
 }
