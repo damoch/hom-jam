@@ -71,11 +71,11 @@ public class GameManager : MonoBehaviour {
 
     public void DecreasePlayerHealth(int num)
     {
-        player.healthPoints -= num;
-        if (player.healthPoints <= player.minHealthPoints)
-        {
-            LoadLevel(loseSceneName);
-        }
+        //player.healthPoints -= num;
+        //if (player.healthPoints <= player.minHealthPoints)
+        //{
+        //    LoadLevel(loseSceneName);
+        //}
     }
 
     public void LookAtPlayer(GameObject obj)

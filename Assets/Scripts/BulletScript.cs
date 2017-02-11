@@ -43,5 +43,10 @@ public class BulletScript : MonoBehaviour
             gameManager.DecreasePlayerHealth(hitPoints);
             Destroy(gameObject);
         }
+
+        if (Other.tag.Equals("Boundary"))
+        {
+            Destroy(gameObject);
+        }
     }
 }
