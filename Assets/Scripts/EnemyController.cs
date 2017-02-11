@@ -122,25 +122,12 @@ public class EnemyController : MonoBehaviour
 
     public void TriggerExit(Collider2D other)
     {
-        if (other.tag.Equals("Enemy"))
-        {
-            other.GetComponent<EnemyController>().Health--;
-        }
         if (other.tag.Equals("Player"))
         {
             enemyInRange = false;
             speed = speedTemp;
             transform.rotation = Quaternion.Euler(0f, 0f, 0f);
             GoToPoint(target.transform.position);
-        }
-        if (other.tag.Equals("Bullet"))
-        {
-            Health -= HeathDrop;
-
-            if (Health <= 0)
-            {
-                Destroy(gameObject);
-            }
         }
     }
 

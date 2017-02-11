@@ -24,10 +24,6 @@ public class BulletScript : MonoBehaviour
     
     void Update()
     {
-        if (Input.GetKeyDown("space"))
-        {
-            Destroy(gameObject);
-        }
     }
 
     void Shoot()
@@ -46,6 +42,18 @@ public class BulletScript : MonoBehaviour
 
         if (Other.tag.Equals("Boundary"))
         {
+            Destroy(gameObject);
+        }
+
+        if (Other.tag.Equals("Enemy"))
+        {
+            EnemyController enemy =
+            Other.gameObject.GetComponent<EnemyController>();
+            enemy.Health -= hitPoints;
+
+            if(enemy.Health<=0)
+                Destroy(Other.gameObject);
+
             Destroy(gameObject);
         }
     }
