@@ -13,7 +13,7 @@ public class FieldOfView : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     { 
-        enemyController.TriggerEntered(other);
+        enemyController.TriggerEnter(other);
     }
 
     void OnTriggerExit2D(Collider2D other)
