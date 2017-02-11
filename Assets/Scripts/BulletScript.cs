@@ -24,10 +24,6 @@ public class BulletScript : MonoBehaviour
     
     void Update()
     {
-        if (Input.GetKeyDown("space"))
-        {
-            Destroy(gameObject);
-        }
     }
 
     void Shoot()
@@ -44,7 +40,7 @@ public class BulletScript : MonoBehaviour
             Destroy(gameObject);
         }
 
-        if (Other.tag.Equals("Boundary"))
+        if (Other.tag.Equals("Boundary") || Other.tag.Equals("Enemy"))
         {
             Destroy(gameObject);
         }
