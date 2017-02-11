@@ -21,7 +21,6 @@ public class CameraControler : MonoBehaviour {
     {
         float posX = player.transform.position.x;
         float posY = player.transform.position.y;
-        Debug.Log("Player x=" + posX + " y=" + posY);
         transform.position = new Vector3(posX, posY, transform.position.z);
     }
 }

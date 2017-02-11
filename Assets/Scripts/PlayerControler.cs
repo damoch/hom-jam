@@ -4,9 +4,24 @@ using UnityEngine;
 
 public class PlayerControler : MonoBehaviour
 {
+    [Range(0, 100)]
     public float speed;
+    [Range(0, 100)]
     public int healthPoints;
+    [Range(0, 100)]
     public int maxHealthPoints;
+    [Range(0, 100)]
+    public int highHealth;
+    [Range(0, 100)]
+    public int lowHealth;
+    [Range(0, 100)]
+    public int minHealthPoints;
+    [Range(0, 10)]
+    public float shootCooldown;
+    public bool canShoot;
+    public GameObject bulletPrefab;
+    public GameObject bulletSpawnPoint;
+
     private float moveX;
     private float moveY;
     public Rigidbody2D rigidboy;
@@ -14,11 +29,11 @@ public class PlayerControler : MonoBehaviour
 
 
     public static readonly KeyCode LEFT = KeyCode.A;
-    public static readonly KeyCode RIGHT = KeyCode.A;
-    public static readonly KeyCode UP = KeyCode.A;
-    public static readonly KeyCode DOWN = KeyCode.A;
+    public static readonly KeyCode RIGHT = KeyCode.D;
+    public static readonly KeyCode UP = KeyCode.W;
+    public static readonly KeyCode DOWN = KeyCode.S;
 
-    public static readonly KeyCode ACTION = KeyCode.A;
+    public static readonly string ACTION = "Fire1";
 
 
 
@@ -26,19 +41,22 @@ public class PlayerControler : MonoBehaviour
     void Start()
     {
         rigidboy = GetComponent<Rigidbody2D>();
+        canShoot = true;
     }
 
     // Update is called once per frame
     void Update()
     {
         onKeyInput();
+        playerMoving();
         changePlayerLookingDirection();
+    }
 
+    private void playerMoving()
+    {
         moveX = Input.GetAxis("Horizontal");
         moveY = Input.GetAxis("Vertical");
-
         rigidboy.velocity = new Vector2(moveX * speed, moveY * speed);
-  
     }
 
     private void onKeyInput()
@@ -55,7 +73,7 @@ public class PlayerControler : MonoBehaviour
         if (Input.GetKeyDown(DOWN))
             onMoveDown();
 
-        if (Input.GetKeyDown(ACTION))
+        if (Input.GetMouseButtonDown(0))
             onPlayerAction();
     }
 
@@ -78,12 +96,13 @@ public class PlayerControler : MonoBehaviour
     private void onMoveDown()
     {
         // TODO: ruch w dol implementacja
-        
+
     }
 
     private void onPlayerAction()
     {
         // TODO: jakies strzelanie, wykonanie akcji
+        playerShoot();
     }
 
     private void changePlayerLookingDirection()
@@ -91,6 +110,28 @@ public class PlayerControler : MonoBehaviour
         mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mousePosition - (Vector2)transform.position).normalized;
         transform.up = direction;
+    }
+
+    private void playerShoot()
+    {
+        if (canShoot)
+        {
+            Debug.Log("Player shoot");
+            createAndShootBullet();
+            StartCoroutine("waitShootCoolDownTime");
+        }
+    }
+
+    private IEnumerator waitShootCoolDownTime()
+    {
+        canShoot = false;
+        yield return new WaitForSeconds(shootCooldown);
+        canShoot = true;
+    }
+
+    private void createAndShootBullet()
+    {
+        Instantiate(bulletPrefab, bulletSpawnPoint.transform.position ,transform.rotation);
     }
 
 }
