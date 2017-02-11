@@ -19,13 +19,19 @@ public class EnemyController : MonoBehaviour
     public float nextWaypointDistance; 
     private int currentWaypoint;
     public float Health;
+    public float HeathDrop;
+    public float newPathSpan;
 
     private float speedTemp;
     private bool canShoot;
     private bool enemyInRange;
+    private GameObject bulletOrigin;
+    private List<GameObject> waypoints;
 
     void Start()
     {
+        waypoints = new List<GameObject>(GameObject.FindGameObjectsWithTag("WayPoint"));
+        bulletOrigin = transform.GetChild(0).gameObject;
         enemyInRange = false;
         canShoot = true;
         currentWaypoint = 0;
@@ -40,6 +46,7 @@ public class EnemyController : MonoBehaviour
         GoToPoint(target.transform.position);
         Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(),
             target.gameObject.GetComponent<BoxCollider2D>());
+        
     }
 
     void OnPathComplete(Path p)
@@ -49,6 +56,7 @@ public class EnemyController : MonoBehaviour
             path = p;
             currentWaypoint = 0;
         }
+
     }
 
     void Update()
@@ -65,8 +73,7 @@ public class EnemyController : MonoBehaviour
 
         if (currentWaypoint >= path.vectorPath.Count)
         {
-            if(Vector2.Distance(transform.position,target.transform.position)> 1)
-            GoToPoint(target.transform.position);
+
             return;
         }
 
@@ -79,7 +86,15 @@ public class EnemyController : MonoBehaviour
             currentWaypoint++;
             return;
         }
+
+
         
+    }
+
+    void ResetPath()
+    {
+        Debug.Log("New path");
+        GoToPoint(target.transform.position);
     }
 
     void FaceEnemy()
@@ -96,7 +111,7 @@ public class EnemyController : MonoBehaviour
 
 
 
-    public void TriggerEntered(Collider2D other)
+    public void TriggerEnter(Collider2D other)
     {
         if (other.tag.Equals("Player"))
         {
@@ -120,7 +135,12 @@ public class EnemyController : MonoBehaviour
         }
         if (other.tag.Equals("Bullet"))
         {
-            Debug.Log("bum");
+            Health -= HeathDrop;
+
+            if (Health <= 0)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -129,7 +149,7 @@ public class EnemyController : MonoBehaviour
         canShoot = false;
         FaceEnemy();
         Debug.Log("New bullet");
-        Instantiate(Bullet, transform.position, transform.rotation);
+        Instantiate(Bullet, bulletOrigin.transform.position, transform.rotation);
         float timeSpan = UnityEngine.Random.Range(ShootingTimeMin, ShootingTimeMax);
         yield return new WaitForSeconds(timeSpan);
         canShoot = true;
