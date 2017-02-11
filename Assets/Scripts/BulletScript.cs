@@ -40,8 +40,20 @@ public class BulletScript : MonoBehaviour
             Destroy(gameObject);
         }
 
-        if (Other.tag.Equals("Boundary") || Other.tag.Equals("Enemy"))
+        if (Other.tag.Equals("Boundary"))
         {
+            Destroy(gameObject);
+        }
+
+        if (Other.tag.Equals("Enemy"))
+        {
+            EnemyController enemy =
+            Other.gameObject.GetComponent<EnemyController>();
+            enemy.Health -= hitPoints;
+
+            if(enemy.Health<=0)
+                Destroy(Other.gameObject);
+
             Destroy(gameObject);
         }
     }
