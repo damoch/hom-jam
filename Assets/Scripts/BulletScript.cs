@@ -10,6 +10,7 @@ public class BulletScript : MonoBehaviour
     void Start()
     {        
         rigidbody = GetComponent<Rigidbody2D>();
+        Physics2D.IgnoreLayerCollision(9,10);
         Shoot();
     }
     
@@ -23,7 +24,7 @@ public class BulletScript : MonoBehaviour
 
     void Shoot()
     {
-        rigidbody.AddForce(Vector2.down * speed);
+        rigidbody.AddForce(Vector2.up * speed);
         rigidbody.velocity = transform.up * speed;
     }
 

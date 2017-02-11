@@ -94,17 +94,18 @@ public class EnemyController : MonoBehaviour
         seeker.StartPath(transform.position, point, OnPathComplete);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+
+
+    public void TriggerEntered(Collider2D other)
     {
         if (other.tag.Equals("Player"))
         {
             enemyInRange = true;
             speed = 0;
         }
-
     }
 
-    void OnTriggerExit2D(Collider2D other)
+    public void TriggerExit(Collider2D other)
     {
         if (other.tag.Equals("Enemy"))
         {
@@ -117,9 +118,11 @@ public class EnemyController : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, 0f, 0f);
             GoToPoint(target.transform.position);
         }
+        if (other.tag.Equals("Bullet"))
+        {
+            Debug.Log("bum");
+        }
     }
-
-
 
     IEnumerator ShootBullet()
     {
