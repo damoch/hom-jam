@@ -6,14 +6,15 @@ public class HealthPack : MonoBehaviour {
 
     public int points;
     public float force;
+    public GameObject spawnPoint;
 
-    GameManager gameManager;
-
+    private GameManager gameManager;
     private Vector3 vectorToPlayer;
 
     private void Awake()
     {
-        gameManager = GameManager.FindObjectOfType<GameManager>();
+        gameManager = GameObject.FindObjectOfType<GameManager>();
+        gameObject.transform.position = spawnPoint.transform.position;
     }
 
     private void Start()
