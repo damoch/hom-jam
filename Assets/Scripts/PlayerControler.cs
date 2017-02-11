@@ -25,9 +25,6 @@ public class PlayerControler : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        speed = 10f;
-        healthPoints = 50;
-        maxHealthPoints = 200;
         rigidboy = GetComponent<Rigidbody2D>();
     }
 

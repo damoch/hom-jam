@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using Pathfinding;
-using UnityEditor;
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
@@ -16,7 +18,8 @@ public class EnemyController : MonoBehaviour
     public float ShootingTimeMax;
     public float nextWaypointDistance; 
     private int currentWaypoint;
-    
+    public float Health;
+
     private float speedTemp;
     private bool canShoot;
     private bool enemyInRange;
@@ -57,7 +60,7 @@ public class EnemyController : MonoBehaviour
 
         if (path == null)
         {
-            //return;
+            return;
         }
 
         if (currentWaypoint >= path.vectorPath.Count)
@@ -82,7 +85,7 @@ public class EnemyController : MonoBehaviour
     void FaceEnemy()
     {
         var dir = target.transform.position - transform.position;
-        var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg -90f;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
@@ -91,25 +94,33 @@ public class EnemyController : MonoBehaviour
         seeker.StartPath(transform.position, point, OnPathComplete);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+
+
+    public void TriggerEntered(Collider2D other)
     {
         if (other.tag.Equals("Player"))
         {
             enemyInRange = true;
             speed = 0;
-            //StartCoroutine(shootingHandle);
         }
-
     }
 
-    void OnTriggerExit2D(Collider2D other)
+    public void TriggerExit(Collider2D other)
     {
+        if (other.tag.Equals("Enemy"))
+        {
+            other.GetComponent<EnemyController>().Health--;
+        }
         if (other.tag.Equals("Player"))
         {
             enemyInRange = false;
             speed = speedTemp;
             transform.rotation = Quaternion.Euler(0f, 0f, 0f);
             GoToPoint(target.transform.position);
+        }
+        if (other.tag.Equals("Bullet"))
+        {
+            Debug.Log("bum");
         }
     }
 
@@ -118,7 +129,7 @@ public class EnemyController : MonoBehaviour
         canShoot = false;
         FaceEnemy();
         Debug.Log("New bullet");
-        Instantiate(Bullet, transform.position,transform.rotation);
+        Instantiate(Bullet, transform.position, transform.rotation);
         float timeSpan = UnityEngine.Random.Range(ShootingTimeMin, ShootingTimeMax);
         yield return new WaitForSeconds(timeSpan);
         canShoot = true;
