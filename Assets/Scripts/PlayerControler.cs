@@ -35,13 +35,17 @@ public class PlayerControler : MonoBehaviour
 
     public static readonly string ACTION = "Fire1";
 
-
-
+    private float animationSpeed;
+    private Animator animator;
     // Use this for initialization
     void Start()
     {
+        animator = GetComponent<Animator>();
         rigidboy = GetComponent<Rigidbody2D>();
         canShoot = true;
+
+        animationSpeed = animator.speed;
+        animator.speed = 0f;
     }
 
     // Update is called once per frame
@@ -56,6 +60,17 @@ public class PlayerControler : MonoBehaviour
     {
         moveX = Input.GetAxis("Horizontal");
         moveY = Input.GetAxis("Vertical");
+
+        if (moveX != 0 || moveY != 0)
+        {
+            animator.speed = animationSpeed;
+        }
+
+        else
+        {
+            animator.speed = 0f;
+        }
+
         rigidboy.velocity = new Vector2(moveX * speed, moveY * speed);
     }
 
