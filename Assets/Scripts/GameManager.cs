@@ -95,7 +95,7 @@ public class GameManager : MonoBehaviour {
             {
                 int index = rnd.Next(spawnPoints.Length);
                 Vector3 position = spawnPoints[index].transform.position;
-                Instantiate(prefab, position, Quaternion.identity);
+                GameObject obj = Instantiate(prefab, position, Quaternion.identity);
             }
         }
     }

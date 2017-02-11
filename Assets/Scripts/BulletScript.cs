@@ -6,7 +6,15 @@ public class BulletScript : MonoBehaviour
 {
     public Rigidbody2D rigidbody;
     public float speed;
-    
+    public int hitPoints;
+
+    private GameManager gameManager;
+
+    private void Awake()
+    {
+        gameManager = GameObject.FindObjectOfType<GameManager>();
+    }
+
     void Start()
     {        
         rigidbody = GetComponent<Rigidbody2D>();
@@ -32,6 +40,7 @@ public class BulletScript : MonoBehaviour
     {
         if (Other.tag.Equals("Player"))
         {
+            gameManager.DecreasePlayerHealth(hitPoints);
             Destroy(gameObject);
         }
     }

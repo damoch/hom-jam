@@ -6,7 +6,6 @@ public class HealthPack : MonoBehaviour {
 
     public int points;
     public float force;
-    public GameObject spawnPoint;
 
     private GameManager gameManager;
     private Vector3 vectorToPlayer;
@@ -14,7 +13,6 @@ public class HealthPack : MonoBehaviour {
     private void Awake()
     {
         gameManager = GameObject.FindObjectOfType<GameManager>();
-        gameObject.transform.position = spawnPoint.transform.position;
     }
 
     private void Start()
@@ -26,7 +24,7 @@ public class HealthPack : MonoBehaviour {
     {
         if (collision.tag == "Player")
         {
-            //GameManager.IncreasePlayerHealth(points);
+            gameManager.IncreasePlayerHealth(points);
             Destroy(gameObject);
         }
         else if (collision.tag == "Boundary")
