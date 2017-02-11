@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System;
 
 public class GameManager : MonoBehaviour {
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour {
 
     public GameObject enemyPrefab;
     public GameObject healthPackPrefab;
+    public string loseSceneName;
 
     private GameObject[] spawnPoints;
     private PlayerControler player;
@@ -61,11 +63,19 @@ public class GameManager : MonoBehaviour {
     public void IncreasePlayerHealth(int num)
     {
         player.healthPoints += num;
+        if (player.healthPoints >= player.maxHealthPoints)
+        {
+            LoadLevel(loseSceneName);
+        }
     }
 
     public void DecreasePlayerHealth(int num)
     {
         player.healthPoints -= num;
+        if (player.healthPoints <= player.minHealthPoints)
+        {
+            LoadLevel(loseSceneName);
+        }
     }
 
     public void LookAtPlayer(GameObject obj)
@@ -98,5 +108,10 @@ public class GameManager : MonoBehaviour {
                 GameObject obj = Instantiate(prefab, position, Quaternion.identity);
             }
         }
+    }
+
+    public void LoadLevel(string name)
+    {
+        SceneManager.LoadScene(name);
     }
 }
