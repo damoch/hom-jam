@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerControler : MonoBehaviour
 {
@@ -36,7 +38,9 @@ public class PlayerControler : MonoBehaviour
     public static readonly string ACTION = "Fire1";
 
     private float animationSpeed;
+    public Text HealthText;
     private Animator animator;
+
     // Use this for initialization
     void Start()
     {
@@ -54,6 +58,12 @@ public class PlayerControler : MonoBehaviour
         onKeyInput();
         playerMoving();
         changePlayerLookingDirection();
+        updatePlayerLife();
+    }
+
+    private void updatePlayerLife()
+    {
+        HealthText.text = healthPoints.ToString();
     }
 
     private void playerMoving()
