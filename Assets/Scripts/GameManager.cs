@@ -28,11 +28,13 @@ public class GameManager : MonoBehaviour {
 
     private GameObject[] spawnPoints;
     private PlayerControler player;
+    private LevelManager levelManager;
 
     private void Awake()
     {
         player = GameObject.FindObjectOfType<PlayerControler>();
         spawnPoints = GameObject.FindGameObjectsWithTag("SpawnPoint");
+        levelManager = GameObject.FindObjectOfType<LevelManager>();
     }
 
     private void Start()
@@ -44,7 +46,6 @@ public class GameManager : MonoBehaviour {
         else
         {
             gameManager = this;
-            GameObject.DontDestroyOnLoad(gameObject);
         }
     }
 
@@ -65,7 +66,7 @@ public class GameManager : MonoBehaviour {
         player.healthPoints += num;
         if (player.healthPoints >= player.maxHealthPoints)
         {
-            LoadLevel(loseSceneName);
+            levelManager.LoadLevel(loseSceneName);
         }
     }
 
@@ -74,7 +75,7 @@ public class GameManager : MonoBehaviour {
         player.healthPoints -= num;
         if (player.healthPoints <= player.minHealthPoints)
         {
-            LoadLevel(loseSceneName);
+            levelManager.LoadLevel(loseSceneName);
         }
     }
 
@@ -108,10 +109,5 @@ public class GameManager : MonoBehaviour {
                 GameObject obj = Instantiate(prefab, position, Quaternion.identity);
             }
         }
-    }
-
-    public void LoadLevel(string name)
-    {
-        SceneManager.LoadScene(name);
     }
 }
