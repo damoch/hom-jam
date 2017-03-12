@@ -4,12 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerControler : MonoBehaviour
+public class PlayerControler : Character
 {
     [Range(0, 100)]
     public float speed;
-    [Range(0, 100)]
-    public int healthPoints;
     [Range(0, 100)]
     public int maxHealthPoints;
     [Range(0, 100)]
@@ -63,7 +61,7 @@ public class PlayerControler : MonoBehaviour
 
     private void updatePlayerLife()
     {
-        HealthText.text = healthPoints.ToString();
+        HealthText.text = HealthPoints.ToString();
     }
 
     private void playerMoving()
@@ -159,4 +157,16 @@ public class PlayerControler : MonoBehaviour
         Instantiate(bulletPrefab, bulletSpawnPoint.transform.position ,transform.rotation);
     }
 
+    public override void UpdateHealthValue(int hitpoints)
+    {
+        HealthPoints += hitpoints;
+        if (HealthPoints > maxHealthPoints || HealthPoints < minHealthPoints)
+        {
+            //Damoch: Do we need a GameManager type field here?
+            GameObject.FindObjectOfType<GameManager>().ResetScene();
+
+        }
+        updatePlayerLife();
+    }
 }
+

@@ -24,7 +24,8 @@ public class HealthPack : MonoBehaviour {
     {
         if (collision.tag == "Player")
         {
-            gameManager.IncreasePlayerHealth(points);
+            //gameManager.IncreasePlayerHealth(points);
+            collision.gameObject.GetComponent<Character>().UpdateHealthValue(points);
             Destroy(gameObject);
         }
         else if (collision.tag == "Boundary")

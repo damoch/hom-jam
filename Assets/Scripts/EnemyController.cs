@@ -7,7 +7,7 @@ using Pathfinding;
 #endif
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+public class EnemyController : Character
 {
     public GameObject Bullet;
     public Transform target;
@@ -18,8 +18,8 @@ public class EnemyController : MonoBehaviour
     public float ShootingTimeMax;
     public float nextWaypointDistance; 
     private int currentWaypoint;
-    public float Health;
-    public float HeathDrop;
+    //public float Health;
+    //public float HeathDrop;
     public float newPathSpan;
 
     private float speedTemp;
@@ -140,5 +140,15 @@ public class EnemyController : MonoBehaviour
         float timeSpan = UnityEngine.Random.Range(ShootingTimeMin, ShootingTimeMax);
         yield return new WaitForSeconds(timeSpan);
         canShoot = true;
+    }
+
+    public override void UpdateHealthValue(int hitpoints)
+    {
+        HealthPoints += hitpoints;
+        if (HealthPoints < 0)
+        {
+            Destroy(gameObject);
+
+        }
     }
 }

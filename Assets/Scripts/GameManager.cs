@@ -61,23 +61,27 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public void IncreasePlayerHealth(int num)
+    public void ResetScene()
     {
-        player.healthPoints += num;
-        if (player.healthPoints >= player.maxHealthPoints)
-        {
-            levelManager.LoadLevel(loseSceneName);
-        }
+        levelManager.LoadLevel(loseSceneName);
     }
+    //public void IncreasePlayerHealth(int num)
+    //{
+    //    player.HealthPoints += num;
+    //    if (player.HealthPoints >= player.maxHealthPoints)
+    //    {
+    //        levelManager.LoadLevel(loseSceneName);
+    //    }
+    //}
 
-    public void DecreasePlayerHealth(int num)
-    {
-        player.healthPoints -= num;
-        if (player.healthPoints <= player.minHealthPoints)
-        {
-            levelManager.LoadLevel(loseSceneName);
-        }
-    }
+    //public void DecreasePlayerHealth(int num)
+    //{
+    //    player.HealthPoints -= num;
+    //    if (player.HealthPoints <= player.minHealthPoints)
+    //    {
+    //        levelManager.LoadLevel(loseSceneName);
+    //    }
+    //}
 
     public void LookAtPlayer(GameObject obj)
     {
