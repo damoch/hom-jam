@@ -1,172 +1,133 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerControler : Character
 {
+    public KeyCode LEFT;
+    public KeyCode RIGHT;
+    public KeyCode UP;
+    public KeyCode DOWN;
     [Range(0, 100)]
-    public float speed;
+    public float Speed;
     [Range(0, 100)]
-    public int maxHealthPoints;
+    public int MaxHealthPoints;
     [Range(0, 100)]
-    public int highHealth;
+    public int HighHealth;
     [Range(0, 100)]
-    public int lowHealth;
+    public int LowHealth;
     [Range(0, 100)]
-    public int minHealthPoints;
+    public int MinHealthPoints;
     [Range(0, 10)]
-    public float shootCooldown;
-    public bool canShoot;
-    public GameObject bulletPrefab;
-    public GameObject bulletSpawnPoint;
+    public float ShootCooldown;
+    public GameObject BulletPrefab;
+    public GameObject BulletSpawnPoint;
 
-    private float moveX;
-    private float moveY;
-    public Rigidbody2D rigidboy;
-    private Vector2 mousePosition;
+    private float _moveX;
+    private float _moveY;
+    private Rigidbody2D _rigidboy;
+    private Vector2 _mousePosition;
+    private bool _canShoot;
 
-
-    public static readonly KeyCode LEFT = KeyCode.A;
-    public static readonly KeyCode RIGHT = KeyCode.D;
-    public static readonly KeyCode UP = KeyCode.W;
-    public static readonly KeyCode DOWN = KeyCode.S;
-
-    public static readonly string ACTION = "Fire1";
-
-    private float animationSpeed;
+    private float _animationSpeed;
     public Text HealthText;
-    private Animator animator;
+    private Animator _animator;
 
-    // Use this for initialization
-    void Start()
+    private float _elapsedCooldown;
+
+    private void Start()
     {
-        animator = GetComponent<Animator>();
-        rigidboy = GetComponent<Rigidbody2D>();
-        canShoot = true;
+        _animator = GetComponent<Animator>();
+        _rigidboy = GetComponent<Rigidbody2D>();
+        _canShoot = true;
 
-        animationSpeed = animator.speed;
-        animator.speed = 0f;
+        _animationSpeed = _animator.speed;
+        _animator.speed = 0f;
+        _elapsedCooldown = 0f;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        onKeyInput();
-        playerMoving();
-        changePlayerLookingDirection();
-        updatePlayerLife();
+        if (!_canShoot)
+        {
+            CheckCanShoot();
+        }
+        OnKeyInput();
+        PlayerMoving();
+        ChangePlayerLookingDirection();
+        UpdatePlayerLife();
     }
 
-    private void updatePlayerLife()
+    private void CheckCanShoot()
+    {
+        _elapsedCooldown += Time.deltaTime;
+
+        if (_elapsedCooldown >= ShootCooldown)
+        {
+            _canShoot = true;
+            _elapsedCooldown = 0f;
+        }
+    }
+
+    private void UpdatePlayerLife()
     {
         HealthText.text = HealthPoints.ToString();
     }
 
-    private void playerMoving()
+    private void PlayerMoving()
     {
-        moveX = Input.GetAxis("Horizontal");
-        moveY = Input.GetAxis("Vertical");
+        _moveX = Input.GetAxis("Horizontal");
+        _moveY = Input.GetAxis("Vertical");
 
-        if (moveX != 0 || moveY != 0)
+        if (_moveX != 0 || _moveY != 0)
         {
-            animator.speed = animationSpeed;
+            _animator.speed = _animationSpeed;
         }
 
         else
         {
-            animator.speed = 0f;
+            _animator.speed = 0f;
         }
 
-        rigidboy.velocity = new Vector2(moveX * speed, moveY * speed);
+        _rigidboy.velocity = new Vector2(_moveX * Speed, _moveY * Speed);
     }
 
-    private void onKeyInput()
+    private void OnKeyInput()
     {
-        if (Input.GetKeyDown(LEFT))
-            onMoveLeft();
-
-        if (Input.GetKeyDown(RIGHT))
-            onMoveRight();
-
-        if (Input.GetKeyDown(UP))
-            onMoveUp();
-
-        if (Input.GetKeyDown(DOWN))
-            onMoveDown();
-
-        if (Input.GetMouseButtonDown(0))
-            onPlayerAction();
+        if (Input.GetMouseButton(0))
+            PlayerShoot();
     }
 
-
-    private void onMoveLeft()
+    private void ChangePlayerLookingDirection()
     {
-        // TODO: ruch w lewo implementacja 
-    }
-
-    private void onMoveRight()
-    {
-        // TODO: ruch w prawo implementacja
-    }
-
-    private void onMoveUp()
-    {
-        // TODO: ruch w gore implementacja
-    }
-
-    private void onMoveDown()
-    {
-        // TODO: ruch w dol implementacja
-
-    }
-
-    private void onPlayerAction()
-    {
-        // TODO: jakies strzelanie, wykonanie akcji
-        playerShoot();
-    }
-
-    private void changePlayerLookingDirection()
-    {
-        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = (mousePosition - (Vector2)transform.position).normalized;
+        _mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 direction = (_mousePosition - (Vector2)transform.position).normalized;
         transform.up = direction;
     }
 
-    private void playerShoot()
+    private void PlayerShoot()
     {
-        if (canShoot)
+        if (!_canShoot)
         {
-            Debug.Log("Player shoot");
-            createAndShootBullet();
-            StartCoroutine("waitShootCoolDownTime");
+            return;
         }
+        CreateAndShootBullet();
     }
 
-    private IEnumerator waitShootCoolDownTime()
+    private void CreateAndShootBullet()
     {
-        canShoot = false;
-        yield return new WaitForSeconds(shootCooldown);
-        canShoot = true;
-    }
-
-    private void createAndShootBullet()
-    {
-        Instantiate(bulletPrefab, bulletSpawnPoint.transform.position ,transform.rotation);
+        Instantiate(BulletPrefab, BulletSpawnPoint.transform.position, transform.rotation);
+        _canShoot = false;
     }
 
     public override void UpdateHealthValue(int hitpoints)
     {
         HealthPoints += hitpoints;
-        if (HealthPoints > maxHealthPoints || HealthPoints < minHealthPoints)
+        if (HealthPoints > MaxHealthPoints || HealthPoints < MinHealthPoints)
         {
-            //Damoch: Do we need a GameManager type field here?
-            GameObject.FindObjectOfType<GameManager>().ResetScene();
+            FindObjectOfType<GameManager>().ResetScene();
 
         }
-        updatePlayerLife();
+        UpdatePlayerLife();
     }
 }
 
