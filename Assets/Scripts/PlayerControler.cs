@@ -19,6 +19,15 @@ public class PlayerControler : Character
     public int MinHealthPoints;
     [Range(0, 10)]
     public float ShootCooldown;
+    [Range(0, 200)]
+    public float MaxWeaponHeat;
+    [Range(0, 200)]
+    public float MinWeaponHeat;
+    [Range(0, 200)]
+    public float WeaponHeatEveryShot;
+    [Range(0, 200)]
+    public float WeaponHeatDrop;
+
     public GameObject BulletPrefab;
     public GameObject BulletSpawnPoint;
 
@@ -33,16 +42,20 @@ public class PlayerControler : Character
     private Animator _animator;
 
     private float _elapsedCooldown;
+    private float _currentWeaponHeat;
+    private bool _weaponOverheat;
 
     private void Start()
     {
         _animator = GetComponent<Animator>();
         _rigidboy = GetComponent<Rigidbody2D>();
         _canShoot = true;
+        _currentWeaponHeat = MinWeaponHeat;
 
         _animationSpeed = _animator.speed;
         _animator.speed = 0f;
         _elapsedCooldown = 0f;
+        _weaponOverheat = false;
     }
 
     private void Update()
@@ -51,7 +64,7 @@ public class PlayerControler : Character
         {
             CheckCanShoot();
         }
-        OnKeyInput();
+        CheckFire();
         PlayerMoving();
         ChangePlayerLookingDirection();
         UpdatePlayerLife();
@@ -91,10 +104,20 @@ public class PlayerControler : Character
         _rigidboy.velocity = new Vector2(_moveX * Speed, _moveY * Speed);
     }
 
-    private void OnKeyInput()
+    private void CheckFire()
     {
         if (Input.GetMouseButton(0))
-            PlayerShoot();
+        {
+            Shoot();
+        }   
+        else if(_currentWeaponHeat > MinWeaponHeat)
+        {
+            _currentWeaponHeat -= WeaponHeatDrop;
+            if(_currentWeaponHeat <= MinWeaponHeat)
+            {
+                _weaponOverheat = false;
+            }
+        }
     }
 
     private void ChangePlayerLookingDirection()
@@ -104,19 +127,20 @@ public class PlayerControler : Character
         transform.up = direction;
     }
 
-    private void PlayerShoot()
+    private void Shoot()
     {
-        if (!_canShoot)
+        if (!_canShoot || _weaponOverheat)
         {
             return;
         }
-        CreateAndShootBullet();
-    }
-
-    private void CreateAndShootBullet()
-    {
         Instantiate(BulletPrefab, BulletSpawnPoint.transform.position, transform.rotation);
         _canShoot = false;
+
+        _currentWeaponHeat += WeaponHeatEveryShot;
+        if(_currentWeaponHeat > MaxWeaponHeat)
+        {
+            _weaponOverheat = true;
+        }
     }
 
     public override void UpdateHealthValue(int hitpoints)
