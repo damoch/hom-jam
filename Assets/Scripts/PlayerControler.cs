@@ -28,7 +28,7 @@ public class PlayerControler : Character
     private Vector2 _mousePosition;
 
     private float _animationSpeed;
-    public Text HealthText;
+    public Slider HealthSlider;
     private Animator _animator;
     private AutoWeaponComponent _autoWeapon;
 
@@ -40,6 +40,8 @@ public class PlayerControler : Character
         _animationSpeed = _animator.speed;
         _animator.speed = 0f;
         _autoWeapon = GetComponent<AutoWeaponComponent>();
+        HealthSlider.maxValue = MaxHealthPoints;
+        HealthSlider.minValue = MinHealthPoints;
     }
 
     private void Update()
@@ -56,7 +58,8 @@ public class PlayerControler : Character
 
     private void UpdatePlayerLife()
     {
-        HealthText.text = HealthPoints.ToString();
+        //HealthText.text = HealthPoints.ToString();
+        HealthSlider.value = HealthPoints;
     }
 
     private void PlayerMoving()
