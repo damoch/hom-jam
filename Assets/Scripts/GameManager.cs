@@ -6,6 +6,8 @@ using System;
 
 public class GameManager : MonoBehaviour {
     static GameManager gameManager = null;
+    [Range(0f, 100f)]
+    public float FreezeTimeInFrames;
 
     [Range(0f, 1f)]
     public float chanceToSpawnHealthPack;
@@ -29,6 +31,8 @@ public class GameManager : MonoBehaviour {
     private GameObject[] spawnPoints;
     private PlayerControler player;
     private LevelManager levelManager;
+    private float _elapsedFreezeFrames;
+    private bool _inFreezeFrame;
 
     private void Awake()
     {
@@ -47,6 +51,8 @@ public class GameManager : MonoBehaviour {
         {
             gameManager = this;
         }
+        _elapsedFreezeFrames = 0;
+        _inFreezeFrame = false;
     }
 
     private void Update()
@@ -59,29 +65,33 @@ public class GameManager : MonoBehaviour {
         {
             SpawnObjectsRandomly(healthPackPrefab, chanceToSpawnHealthPack);
         }
+        if (_inFreezeFrame)
+        {
+            _elapsedFreezeFrames++;
+
+            if(_elapsedFreezeFrames >= FreezeTimeInFrames)
+            {
+                _inFreezeFrame = false;
+                _elapsedFreezeFrames = 0;
+                Time.timeScale = 1;
+            }
+        }
     }
 
     public void ResetScene()
     {
         levelManager.LoadLevel(loseSceneName);
     }
-    //public void IncreasePlayerHealth(int num)
-    //{
-    //    player.HealthPoints += num;
-    //    if (player.HealthPoints >= player.maxHealthPoints)
-    //    {
-    //        levelManager.LoadLevel(loseSceneName);
-    //    }
-    //}
 
-    //public void DecreasePlayerHealth(int num)
-    //{
-    //    player.HealthPoints -= num;
-    //    if (player.HealthPoints <= player.minHealthPoints)
-    //    {
-    //        levelManager.LoadLevel(loseSceneName);
-    //    }
-    //}
+    public void FreezeFrame()
+    {
+        if (_inFreezeFrame)
+        {
+            return;
+        }
+        _inFreezeFrame = true;
+        Time.timeScale = 0;
+    }
 
     public void LookAtPlayer(GameObject obj)
     {

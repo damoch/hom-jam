@@ -27,9 +27,11 @@ public class EnemyController : Character
     private bool enemyInRange;
     private GameObject bulletOrigin;
     private List<GameObject> waypoints;
+    private GameManager _gameManager;
 
     void Start()
     {
+        _gameManager = FindObjectOfType<GameManager>();
         waypoints = new List<GameObject>(GameObject.FindGameObjectsWithTag("WayPoint"));
         bulletOrigin = transform.GetChild(0).gameObject;
         enemyInRange = false;
@@ -147,6 +149,7 @@ public class EnemyController : Character
         HealthPoints += hitpoints;
         if (HealthPoints < 0)
         {
+            _gameManager.FreezeFrame();
             Destroy(gameObject);
 
         }
