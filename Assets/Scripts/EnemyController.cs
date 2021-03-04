@@ -1,7 +1,5 @@
-﻿using System;
+﻿
 using System.Collections;
-using System.Collections.Generic;
-using Pathfinding;
 #if UNITY_EDITOR
     using UnityEditor;
 #endif
@@ -11,33 +9,25 @@ public class EnemyController : Character
 {
     public GameObject Bullet;
     public Transform target;
-    private Seeker seeker;  
-    public Path path;   
     public float speed;
     public float ShootingTimeMin;
     public float ShootingTimeMax;
     public float nextWaypointDistance; 
-    private int currentWaypoint;
-    //public float Health;
-    //public float HeathDrop;
     public float newPathSpan;
 
     private float speedTemp;
     private bool canShoot;
     private bool enemyInRange;
     private GameObject bulletOrigin;
-    private List<GameObject> waypoints;
     private GameManager _gameManager;
+    private Vector3 _currentTarget;
 
     void Start()
     {
         _gameManager = FindObjectOfType<GameManager>();
-        waypoints = new List<GameObject>(GameObject.FindGameObjectsWithTag("WayPoint"));
         bulletOrigin = transform.GetChild(0).gameObject;
         enemyInRange = false;
         canShoot = true;
-        currentWaypoint = 0;
-        seeker = GetComponent<Seeker>();
         speedTemp = speed;
 
         if (target == null)
@@ -51,16 +41,6 @@ public class EnemyController : Character
         
     }
 
-    void OnPathComplete(Path p)
-    {
-        if (!p.error)
-        {
-            path = p;
-            currentWaypoint = 0;
-        }
-
-    }
-
     void Update()
     {
         if (enemyInRange && canShoot)
@@ -68,35 +48,15 @@ public class EnemyController : Character
             StartCoroutine("ShootBullet");
         }
 
-        if (path == null)
-        {
-            return;
-        }
-
-        if (currentWaypoint >= path.vectorPath.Count)
-        {
-
-            return;
-        }
-
-        Vector3 dir = (path.vectorPath[currentWaypoint] - transform.position).normalized;
+        Vector3 dir = (_currentTarget - transform.position).normalized;
         dir *= speed * Time.fixedDeltaTime;
-        this.gameObject.transform.Translate(dir);
-
-        if (Vector3.Distance(transform.position, path.vectorPath[currentWaypoint]) < nextWaypointDistance)
+        gameObject.transform.Translate(dir);
+        Debug.Log(Vector3.Distance(_currentTarget, target.transform.position));
+        if (Vector3.Distance(_currentTarget, target.transform.position) < nextWaypointDistance)
         {
-            currentWaypoint++;
+            GoToPoint(target.transform.position);
             return;
         }
-
-
-        
-    }
-
-    void ResetPath()
-    {
-        Debug.Log("New path");
-        GoToPoint(target.transform.position);
     }
 
     void FaceEnemy()
@@ -108,10 +68,9 @@ public class EnemyController : Character
 
     void GoToPoint(Vector2 point)
     {
-        seeker.StartPath(transform.position, point, OnPathComplete);
+        _currentTarget = point;
+        Debug.Log(point);
     }
-
-
 
     public void TriggerEnter(Collider2D other)
     {
