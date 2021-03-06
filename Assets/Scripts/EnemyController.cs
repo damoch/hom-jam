@@ -47,7 +47,7 @@ public class EnemyController : Character
         {
             StartCoroutine("ShootBullet");
         }
-
+        FaceEnemy();
         Vector3 dir = (_currentTarget - transform.position).normalized;
         dir *= speed * Time.fixedDeltaTime;
         gameObject.transform.Translate(dir);
