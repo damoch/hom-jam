@@ -50,7 +50,7 @@ public class PlayerControler : Character
         {
             _autoWeapon.CheckCanShoot();
         }
-        _autoWeapon.CheckFire();
+        _autoWeapon.CheckFire(Input.GetMouseButton(0));
         PlayerMoving();
         ChangePlayerLookingDirection();
         UpdatePlayerLife();

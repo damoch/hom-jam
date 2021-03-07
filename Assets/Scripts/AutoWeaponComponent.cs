@@ -22,15 +22,15 @@ namespace Assets.Scripts
 
         private float _elapsedCooldown;
         private float _currentWeaponHeat;
-        private bool _weaponOverheat;
 
         public bool CanShoot { get; set; }
+        public bool WeaponOverheat { get; set; }
 
         private void Start()
         {
             CanShoot = true;
             _currentWeaponHeat = MinWeaponHeat;
-            _weaponOverheat = false;
+            WeaponOverheat = false;
 
         }
 
@@ -45,9 +45,9 @@ namespace Assets.Scripts
             }
         }
 
-        public void CheckFire()
+        public void CheckFire(bool triggerFired)
         {
-            if (Input.GetMouseButton(0) && CanShoot && !_weaponOverheat)
+            if (triggerFired && CanShoot && !WeaponOverheat)
             {
                 Shoot();
                 return;
@@ -57,10 +57,17 @@ namespace Assets.Scripts
                 _currentWeaponHeat -= WeaponHeatDrop;
                 if (_currentWeaponHeat <= MinWeaponHeat)
                 {
-                    _weaponOverheat = false;
+                    WeaponOverheat = false;
                 }
+                UpdateHeatingSlider();
+            }
+        }
 
-                HeatingSlider.value = _currentWeaponHeat/100;
+        private void UpdateHeatingSlider()
+        {
+            if (HeatingSlider)
+            {
+                HeatingSlider.value = _currentWeaponHeat / 100;
             }
         }
 
@@ -72,9 +79,9 @@ namespace Assets.Scripts
             _currentWeaponHeat += WeaponHeatEveryShot;
             if (_currentWeaponHeat > MaxWeaponHeat)
             {
-                _weaponOverheat = true;
+                WeaponOverheat = true;
             }
-            HeatingSlider.value = _currentWeaponHeat / 100;
+            UpdateHeatingSlider();
         }
     }
 }

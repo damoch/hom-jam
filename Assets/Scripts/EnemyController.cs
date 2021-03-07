@@ -1,4 +1,5 @@
 ﻿
+using Assets.Scripts;
 using System.Collections;
 #if UNITY_EDITOR
     using UnityEditor;
@@ -16,18 +17,16 @@ public class EnemyController : Character
     public float newPathSpan;
 
     private float speedTemp;
-    private bool canShoot;
     private bool enemyInRange;
-    private GameObject bulletOrigin;
     private GameManager _gameManager;
     private Vector3 _currentTarget;
+    private AutoWeaponComponent _weapon;
 
     void Start()
     {
         _gameManager = FindObjectOfType<GameManager>();
-        bulletOrigin = transform.GetChild(0).gameObject;
+        _weapon = GetComponent<AutoWeaponComponent>();
         enemyInRange = false;
-        canShoot = true;
         speedTemp = speed;
 
         if (target == null)
@@ -43,10 +42,11 @@ public class EnemyController : Character
 
     void Update()
     {
-        if (enemyInRange && canShoot)
+        if (!_weapon.CanShoot)
         {
-            StartCoroutine("ShootBullet");
+            _weapon.CheckCanShoot();
         }
+        _weapon.CheckFire(enemyInRange);
         FaceEnemy();
         Vector3 dir = (_currentTarget - transform.position).normalized;
         dir *= speed * Time.fixedDeltaTime;
@@ -90,17 +90,6 @@ public class EnemyController : Character
             transform.rotation = Quaternion.Euler(0f, 0f, 0f);
             GoToPoint(target.transform.position);
         }
-    }
-
-    IEnumerator ShootBullet()
-    {
-        canShoot = false;
-        FaceEnemy();
-        Debug.Log("New bullet");
-        Instantiate(Bullet, bulletOrigin.transform.position, transform.rotation);
-        float timeSpan = UnityEngine.Random.Range(ShootingTimeMin, ShootingTimeMax);
-        yield return new WaitForSeconds(timeSpan);
-        canShoot = true;
     }
 
     public override void UpdateHealthValue(int hitpoints)
