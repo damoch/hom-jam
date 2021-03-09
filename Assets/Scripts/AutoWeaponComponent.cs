@@ -19,9 +19,11 @@ namespace Assets.Scripts
 
         public GameObject BulletPrefab;
         public GameObject BulletSpawnPoint;
+        public AudioClip ShootAudioClip;
 
         private float _elapsedCooldown;
         private float _currentWeaponHeat;
+        private AudioSource _audioSource;
 
         public bool CanShoot { get; set; }
         public bool WeaponOverheat { get; set; }
@@ -31,6 +33,7 @@ namespace Assets.Scripts
             CanShoot = true;
             _currentWeaponHeat = MinWeaponHeat;
             WeaponOverheat = false;
+            _audioSource = GetComponent<AudioSource>();
 
         }
 
@@ -74,6 +77,7 @@ namespace Assets.Scripts
         private void Shoot()
         {
             Instantiate(BulletPrefab, BulletSpawnPoint.transform.position, transform.rotation);
+            _audioSource.PlayOneShot(ShootAudioClip);
             CanShoot = false;
 
             _currentWeaponHeat += WeaponHeatEveryShot;
