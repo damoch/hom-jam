@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
     private LevelManager _levelManager;
     private float _elapsedFreezeFrames;
     private bool _inFreezeFrame;
+    private int _enemyCount;
 
     private void Awake()
     {
@@ -39,15 +41,17 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        _enemyCount = 0;
         _elapsedFreezeFrames = 0;
         _inFreezeFrame = false;
     }
 
     private void Update()
     {
-        //TODO: Searching for objects twice on every frame.... Yeah, that smells
-        if (GameObject.FindGameObjectsWithTag(EnemyPrefab.tag).Length < MaxEnemies)
+        if (_enemyCount < MaxEnemies)
         {
+            Debug.Log("Spawn");
+            _enemyCount++;
             SpawnObjectsRandomly(EnemyPrefab, ChanceToSpawnEnemy);
         }
         if (GameObject.FindGameObjectsWithTag(HealthPackPrefab.tag).Length < MaxHealthPacks)
@@ -99,18 +103,26 @@ public class GameManager : MonoBehaviour
     {
         System.Random rnd = new System.Random();
 
-        if (rnd.NextDouble() > chanceToSpawn * ChanceFactor)
-            return;
-        else
-        {
-            int numOfObjects = rnd.Next(1, _spawnPoints.Length);
+        //if (rnd.NextDouble() > chanceToSpawn * ChanceFactor)
+        //    return;
+        //else
+        //{
+        int numOfObjects = rnd.Next(1, _spawnPoints.Length);
 
             for (int i = 0; i < numOfObjects; i++)
             {
                 int index = rnd.Next(_spawnPoints.Length);
                 Vector3 position = _spawnPoints[index].transform.position;
                 Instantiate(prefab, position, Quaternion.identity);
+            return;
             }
-        }
+        //}
+    }
+
+    internal void NotifyEnemyDestroyed(EnemyController enemy)
+    {
+        //FreezeFrame();
+        Destroy(enemy.gameObject);
+        _enemyCount--;
     }
 }

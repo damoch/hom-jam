@@ -97,8 +97,9 @@ public class EnemyController : Character
         HealthPoints += hitpoints;
         if (HealthPoints < 0)
         {
-            _gameManager.FreezeFrame();
-            Destroy(gameObject);
+            //_gameManager.FreezeFrame();
+            _gameManager.NotifyEnemyDestroyed(this);
+            //Destroy(gameObject);
 
         }
     }
