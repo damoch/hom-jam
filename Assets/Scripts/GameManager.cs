@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     private float _elapsedFreezeFrames;
     private bool _inFreezeFrame;
     private int _enemyCount;
+    private int _medkitsCount;
 
     private void Awake()
     {
@@ -41,6 +42,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        _medkitsCount = 0;
         _enemyCount = 0;
         _elapsedFreezeFrames = 0;
         _inFreezeFrame = false;
@@ -50,13 +52,13 @@ public class GameManager : MonoBehaviour
     {
         if (_enemyCount < MaxEnemies)
         {
-            Debug.Log("Spawn");
             _enemyCount++;
             SpawnObjectsRandomly(EnemyPrefab, ChanceToSpawnEnemy);
         }
-        if (GameObject.FindGameObjectsWithTag(HealthPackPrefab.tag).Length < MaxHealthPacks)
+        if (_medkitsCount < MaxHealthPacks)
         {
-            SpawnObjectsRandomly(HealthPackPrefab, ChanceToSpawnHealthPack);
+            _medkitsCount++;
+            SpawnObjectsRandomly(HealthPackPrefab, ChanceToSpawnHealthPack).GetComponent<HealthPack>().MoveToPlayer(_player);
         }
         if (_inFreezeFrame)
         {
@@ -71,7 +73,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ResetScene()
+    public void GameOver()
     {
         _levelManager.LoadLevel(LoseSceneName);
     }
@@ -86,37 +88,17 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0;
     }
 
-    public void LookAtPlayer(GameObject obj)
+    internal void HealthKitDestroyed()
     {
-        float angle = Mathf.Atan2((_player.transform.position.y - obj.transform.position.y), (_player.transform.position.x - obj.transform.position.x)) * Mathf.Rad2Deg;
-        obj.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+        _medkitsCount--;
     }
 
-    public void MoveToPlayer(GameObject obj, float force)
-    {
-        LookAtPlayer(obj);
-        Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
-        rb.AddRelativeForce(new Vector2(1f * force, 0));
-    }
-
-    private void SpawnObjectsRandomly(GameObject prefab, float chanceToSpawn)
+    private GameObject SpawnObjectsRandomly(GameObject prefab, float chanceToSpawn)
     {
         System.Random rnd = new System.Random();
-
-        //if (rnd.NextDouble() > chanceToSpawn * ChanceFactor)
-        //    return;
-        //else
-        //{
-        int numOfObjects = rnd.Next(1, _spawnPoints.Length);
-
-            for (int i = 0; i < numOfObjects; i++)
-            {
-                int index = rnd.Next(_spawnPoints.Length);
-                Vector3 position = _spawnPoints[index].transform.position;
-                Instantiate(prefab, position, Quaternion.identity);
-            return;
-            }
-        //}
+        int index = rnd.Next(_spawnPoints.Length);
+        Vector3 position = _spawnPoints[index].transform.position;
+        return Instantiate(prefab, position, Quaternion.identity);
     }
 
     internal void NotifyEnemyDestroyed(EnemyController enemy)

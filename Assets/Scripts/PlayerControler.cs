@@ -21,6 +21,7 @@ public class PlayerControler : Character
 
     public GameObject BulletPrefab;
     public GameObject BulletSpawnPoint;
+    public GameManager GameManager;
 
     private float _moveX;
     private float _moveY;
@@ -58,7 +59,6 @@ public class PlayerControler : Character
 
     private void UpdatePlayerLife()
     {
-        //HealthText.text = HealthPoints.ToString();
         HealthSlider.value = HealthPoints;
     }
 
@@ -92,8 +92,7 @@ public class PlayerControler : Character
         HealthPoints += hitpoints;
         if (HealthPoints > MaxHealthPoints || HealthPoints < MinHealthPoints)
         {
-            FindObjectOfType<GameManager>().ResetScene();
-
+            GameManager.GameOver();
         }
         UpdatePlayerLife();
     }

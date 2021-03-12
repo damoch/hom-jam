@@ -51,7 +51,6 @@ public class EnemyController : Character
         Vector3 dir = (_currentTarget - transform.position).normalized;
         dir *= speed * Time.fixedDeltaTime;
         gameObject.transform.Translate(dir);
-        Debug.Log(Vector3.Distance(_currentTarget, target.transform.position));
         if (Vector3.Distance(_currentTarget, target.transform.position) < nextWaypointDistance)
         {
             GoToPoint(target.transform.position);
