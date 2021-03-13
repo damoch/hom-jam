@@ -26,10 +26,6 @@ public class BulletController : MonoBehaviour
         Physics2D.IgnoreLayerCollision(9,10);
         Shoot();
     }
-    
-    void Update()
-    {
-    }
 
     void Shoot()
     {
@@ -43,12 +39,12 @@ public class BulletController : MonoBehaviour
 
         if (HitableTags.Contains(tag))
         {
-           other.gameObject.GetComponent<Character>().UpdateHealthValue(-hitPoints);
+            other.gameObject.GetComponent<Character>().UpdateHealthValue(-hitPoints);
             Destroy(gameObject);
         }
         if (PenatrableTags.Contains(tag))
         {
-            other.gameObject.GetComponent<Character>().UpdateHealthValue(-hitPoints);
+            return;
         }
         else if(!tag.Equals("UNTAGGED"))
         {
