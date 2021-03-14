@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -92,8 +93,15 @@ public class PlayerControler : Character
         HealthPoints += hitpoints;
         if (HealthPoints > MaxHealthPoints || HealthPoints < MinHealthPoints)
         {
+            _autoWeapon.ResetWeapon();
             GameManager.GameOver();
         }
+        UpdatePlayerLife();
+    }
+
+    internal void SetStartGameValues(int startPlayerHealth)
+    {
+        HealthPoints = startPlayerHealth;
         UpdatePlayerLife();
     }
 }

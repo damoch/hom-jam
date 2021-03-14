@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Assets.Scripts.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -21,9 +24,19 @@ public class GameManager : MonoBehaviour
     [Range(1, 100)]
     public int MaxHealthPacks;
 
+    [Range(1, 100)]
+    public int StartPlayerHealth;
+
+    [Range(1, 100)]
+    public int StartPlayerEnergy;
+
     public GameObject EnemyPrefab;
     public GameObject HealthPackPrefab;
     public string LoseSceneName;
+    public GameState GameState;
+    public KeyCode StartNewGameKey;
+    public Vector2 PlayersStartPosition;
+    public GameObject TitleScreen;
 
     private GameObject[] _spawnPoints;
     private PlayerControler _player;
@@ -32,12 +45,14 @@ public class GameManager : MonoBehaviour
     private bool _inFreezeFrame;
     private int _enemyCount;
     private int _medkitsCount;
+    private List<EnemyController> _enemiesOnMap;
 
     private void Awake()
     {
         _player = FindObjectOfType<PlayerControler>();
         _spawnPoints = GameObject.FindGameObjectsWithTag("SpawnPoint");
         _levelManager = FindObjectOfType<LevelManager>();
+        _enemiesOnMap = new List<EnemyController>();
     }
 
     private void Start()
@@ -45,15 +60,32 @@ public class GameManager : MonoBehaviour
         _medkitsCount = 0;
         _enemyCount = 0;
         _elapsedFreezeFrames = 0;
-        _inFreezeFrame = false;
+        _inFreezeFrame = false; 
+        GameOver();
     }
 
     private void Update()
     {
+        if(GameState == GameState.GameOn)
+        {
+            UpdateGamePlay();
+        }
+        else if(GameState == GameState.GameOver)
+        {
+            if (Input.GetKey(StartNewGameKey))
+            {
+                StartNewGame();
+            }
+        }
+
+    }
+
+    private void UpdateGamePlay()
+    {
         if (_enemyCount < MaxEnemies)
         {
             _enemyCount++;
-            SpawnObjectsRandomly(EnemyPrefab, ChanceToSpawnEnemy);
+            _enemiesOnMap.Add(SpawnObjectsRandomly(EnemyPrefab, ChanceToSpawnEnemy).GetComponent<EnemyController>());
         }
         if (_medkitsCount < MaxHealthPacks)
         {
@@ -73,9 +105,24 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void StartNewGame()
+    {
+        TitleScreen.SetActive(false);
+        GameState = GameState.GameOn;
+        _player.SetStartGameValues(StartPlayerHealth);
+        _player.gameObject.SetActive(true);
+    }
+
     public void GameOver()
     {
-        _levelManager.LoadLevel(LoseSceneName);
+        TitleScreen.SetActive(true);
+        GameState = GameState.GameOver;
+        while(_enemiesOnMap.Count > 0)
+        {
+            NotifyEnemyDestroyed(_enemiesOnMap.First());
+        }
+        _player.transform.position = PlayersStartPosition;
+        _player.gameObject.SetActive(false);
     }
 
     public void FreezeFrame()
@@ -103,7 +150,7 @@ public class GameManager : MonoBehaviour
 
     internal void NotifyEnemyDestroyed(EnemyController enemy)
     {
-        //FreezeFrame();
+        _enemiesOnMap.Remove(enemy);
         Destroy(enemy.gameObject);
         _enemyCount--;
     }

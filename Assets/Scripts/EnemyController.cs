@@ -68,7 +68,6 @@ public class EnemyController : Character
     void GoToPoint(Vector2 point)
     {
         _currentTarget = point;
-        Debug.Log(point);
     }
 
     public void TriggerEnter(Collider2D other)
@@ -96,9 +95,7 @@ public class EnemyController : Character
         HealthPoints += hitpoints;
         if (HealthPoints < 0)
         {
-            //_gameManager.FreezeFrame();
             _gameManager.NotifyEnemyDestroyed(this);
-            //Destroy(gameObject);
 
         }
     }

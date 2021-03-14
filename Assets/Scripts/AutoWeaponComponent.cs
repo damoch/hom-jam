@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Assets.Scripts
@@ -85,6 +86,13 @@ namespace Assets.Scripts
             {
                 WeaponOverheat = true;
             }
+            UpdateHeatingSlider();
+        }
+
+        internal void ResetWeapon()
+        {
+            _currentWeaponHeat = MinWeaponHeat;
+            WeaponOverheat = false;
             UpdateHeatingSlider();
         }
     }
