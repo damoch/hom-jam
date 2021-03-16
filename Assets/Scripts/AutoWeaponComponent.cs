@@ -8,6 +8,8 @@ namespace Assets.Scripts
     {
         [Range(0, 10)]
         public float ShootCooldown;
+        [Range(0, 10)]
+        public float ShootCooldownOverheat;
         [Range(0, 200)]
         public float MaxWeaponHeat;
         [Range(0, 200)]
@@ -16,6 +18,8 @@ namespace Assets.Scripts
         public float WeaponHeatEveryShot;
         [Range(0, 200)]
         public float WeaponHeatDrop;
+        [Range(0, 200)]
+        public float WeaponHeatDangerBound;
         public Slider HeatingSlider;
 
         public GameObject BulletPrefab;
@@ -41,8 +45,8 @@ namespace Assets.Scripts
         public void CheckCanShoot()
         {
             _elapsedCooldown += Time.deltaTime;
-
-            if (_elapsedCooldown >= ShootCooldown)
+            var currentCooldown = _currentWeaponHeat > WeaponHeatDangerBound ? ShootCooldownOverheat : ShootCooldown;
+            if (_elapsedCooldown >= currentCooldown)
             {
                 CanShoot = true;
                 _elapsedCooldown = 0f;

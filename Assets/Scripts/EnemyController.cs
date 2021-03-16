@@ -9,7 +9,7 @@ using UnityEngine;
 public class EnemyController : Character
 {
     public GameObject Bullet;
-    public Transform target;
+    public GameObject target;
     public float speed;
     public float ShootingTimeMin;
     public float ShootingTimeMax;
@@ -19,7 +19,6 @@ public class EnemyController : Character
     private float speedTemp;
     private bool enemyInRange;
     private GameManager _gameManager;
-    private Vector3 _currentTarget;
     private AutoWeaponComponent _weapon;
 
     void Start()
@@ -31,10 +30,9 @@ public class EnemyController : Character
 
         if (target == null)
         {
-            target = GameObject.FindGameObjectWithTag("Player").transform;
+            target = GameObject.FindGameObjectWithTag("Player");
         }
 
-        GoToPoint(target.transform.position);
         Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(),
             target.gameObject.GetComponent<BoxCollider2D>());
         
@@ -48,14 +46,9 @@ public class EnemyController : Character
         }
         _weapon.CheckFire(enemyInRange);
         FaceEnemy();
-        Vector3 dir = (_currentTarget - transform.position).normalized;
+        Vector3 dir = Vector2.up;
         dir *= speed * Time.fixedDeltaTime;
         gameObject.transform.Translate(dir);
-        if (Vector3.Distance(_currentTarget, target.transform.position) < nextWaypointDistance)
-        {
-            GoToPoint(target.transform.position);
-            return;
-        }
     }
 
     void FaceEnemy()
@@ -63,11 +56,6 @@ public class EnemyController : Character
         var dir = target.transform.position - transform.position;
         var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg -90f;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-    }
-
-    void GoToPoint(Vector2 point)
-    {
-        _currentTarget = point;
     }
 
     public void TriggerEnter(Collider2D other)
@@ -86,7 +74,6 @@ public class EnemyController : Character
             enemyInRange = false;
             speed = speedTemp;
             transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-            GoToPoint(target.transform.position);
         }
     }
 
