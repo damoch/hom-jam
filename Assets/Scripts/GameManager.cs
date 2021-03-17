@@ -31,6 +31,15 @@ public class GameManager : MonoBehaviour
     [Range(1, 100)]
     public int StartPlayerEnergy;
 
+    [Range(0, 300)]
+    public int GameOverSlowdownLengthFrames;
+
+    [Range(0f, 1f)]
+    public float GameOverSlowdownTimeScaleBegin;
+
+    [Range(0f, 1f)]
+    public float GameOverSlowdownTimeScaleEnd;
+
     public GameObject EnemyPrefab;
     public GameObject HealthPackPrefab;
     public string LoseSceneName;
@@ -48,6 +57,8 @@ public class GameManager : MonoBehaviour
     private int _medkitsCount;
     private List<EnemyController> _enemiesOnMap;
     private int _enemiesDestroyed;
+    private float _elapsedGameOverSlowdownFrames;
+    private float _timeScaleDropEveryFrame;
 
     private void Awake()
     {
@@ -62,23 +73,40 @@ public class GameManager : MonoBehaviour
         _enemyCount = 0;
         _elapsedFreezeFrames = 0;
         _inFreezeFrame = false;
+        _timeScaleDropEveryFrame = (GameOverSlowdownTimeScaleBegin - GameOverSlowdownTimeScaleEnd) / GameOverSlowdownLengthFrames;
         GameOver();
     }
 
     private void Update()
     {
-        if(GameState == GameState.GameOn)
+        switch (GameState)
         {
-            UpdateGamePlay();
-        }
-        else if(GameState == GameState.GameOver)
-        {
-            if (Input.GetKey(StartNewGameKey))
-            {
-                StartNewGame();
-            }
+            case GameState.GameOn:
+                UpdateGamePlay();
+                break;
+            case GameState.GameOver:
+                if (Input.GetKey(StartNewGameKey))
+                {
+                    StartNewGame();
+                }
+                break;
+            case GameState.GameOverSlowdown:
+                UpdateSlowdown();
+                break;
         }
 
+    }
+
+    private void UpdateSlowdown()
+    {
+        _elapsedGameOverSlowdownFrames++;
+        Time.timeScale -= _timeScaleDropEveryFrame;
+        if (_elapsedGameOverSlowdownFrames >= GameOverSlowdownLengthFrames)
+        {
+            Time.timeScale = 1;
+            _elapsedGameOverSlowdownFrames = 0;
+            GameOver();
+        }
     }
 
     private void UpdateGamePlay()
@@ -114,11 +142,17 @@ public class GameManager : MonoBehaviour
         _player.gameObject.SetActive(true);
     }
 
-    public void GameOver()
+    public void BeginGameOver()
+    {
+        Time.timeScale = GameOverSlowdownTimeScaleBegin;
+        GameState = GameState.GameOverSlowdown;
+    }
+
+    private void GameOver()
     {
         TitleScreen.SetActive(true);
         GameState = GameState.GameOver;
-        while(_enemiesOnMap.Count > 0)
+        while (_enemiesOnMap.Count > 0)
         {
             NotifyEnemyDestroyed(_enemiesOnMap.First());
         }

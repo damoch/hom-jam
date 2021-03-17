@@ -2,6 +2,6 @@
 {
     public enum GameState
     {
-        GameOver, GameOn
+        GameOver, GameOn, GameOverSlowdown
     }
 }

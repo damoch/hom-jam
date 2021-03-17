@@ -1,14 +1,9 @@
 ﻿using Assets.Scripts;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerControler : Character
 {
-    public KeyCode LEFT;
-    public KeyCode RIGHT;
-    public KeyCode UP;
-    public KeyCode DOWN;
     [Range(0, 100)]
     public float Speed;
     [Range(0, 100)]
@@ -48,6 +43,10 @@ public class PlayerControler : Character
 
     private void Update()
     {
+        if(GameManager.GameState == Assets.Scripts.Enums.GameState.GameOverSlowdown)
+        {
+            return;
+        }
         if (!_autoWeapon.CanShoot)
         {
             _autoWeapon.CheckCanShoot();
@@ -94,7 +93,7 @@ public class PlayerControler : Character
         if (HealthPoints > MaxHealthPoints || HealthPoints < MinHealthPoints)
         {
             _autoWeapon.ResetWeapon();
-            GameManager.GameOver();
+            GameManager.BeginGameOver();
         }
         UpdatePlayerLife();
     }
