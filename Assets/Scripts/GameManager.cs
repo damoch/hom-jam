@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -37,21 +38,21 @@ public class GameManager : MonoBehaviour
     public KeyCode StartNewGameKey;
     public Vector2 PlayersStartPosition;
     public GameObject TitleScreen;
+    public Text EnemiesDestroyedCounterText;
 
     private GameObject[] _spawnPoints;
     private PlayerControler _player;
-    private LevelManager _levelManager;
     private float _elapsedFreezeFrames;
     private bool _inFreezeFrame;
     private int _enemyCount;
     private int _medkitsCount;
     private List<EnemyController> _enemiesOnMap;
+    private int _enemiesDestroyed;
 
     private void Awake()
     {
         _player = FindObjectOfType<PlayerControler>();
         _spawnPoints = GameObject.FindGameObjectsWithTag("SpawnPoint");
-        _levelManager = FindObjectOfType<LevelManager>();
         _enemiesOnMap = new List<EnemyController>();
     }
 
@@ -60,7 +61,7 @@ public class GameManager : MonoBehaviour
         _medkitsCount = 0;
         _enemyCount = 0;
         _elapsedFreezeFrames = 0;
-        _inFreezeFrame = false; 
+        _inFreezeFrame = false;
         GameOver();
     }
 
@@ -123,6 +124,13 @@ public class GameManager : MonoBehaviour
         }
         _player.transform.position = PlayersStartPosition;
         _player.gameObject.SetActive(false);
+        _enemiesDestroyed = 0;
+        SetEnemiesDestroyedText();
+    }
+
+    private void SetEnemiesDestroyedText()
+    {
+        EnemiesDestroyedCounterText.text = _enemiesDestroyed.ToString();
     }
 
     public void FreezeFrame()
@@ -150,6 +158,8 @@ public class GameManager : MonoBehaviour
 
     internal void NotifyEnemyDestroyed(EnemyController enemy)
     {
+        _enemiesDestroyed++;
+        SetEnemiesDestroyedText();
         _enemiesOnMap.Remove(enemy);
         Destroy(enemy.gameObject);
         _enemyCount--;
