@@ -2,12 +2,11 @@
 
 public class CameraControler : MonoBehaviour {
 
-    GameObject player;
+    public GameObject Player;
 
 
 	// Use this for initialization
 	void Start () {
-        player = GameObject.FindGameObjectWithTag("Player");
 	}
 	
 	// Update is called once per frame
@@ -17,8 +16,8 @@ public class CameraControler : MonoBehaviour {
 
     private void hookCameraToPlayer()
     {
-        float posX = player.transform.position.x;
-        float posY = player.transform.position.y;
+        float posX = Player.transform.position.x;
+        float posY = Player.transform.position.y;
         transform.position = new Vector3(posX, posY, transform.position.z);
     }
 }

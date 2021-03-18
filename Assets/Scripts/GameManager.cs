@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
     public KeyCode StartNewGameKey;
     public Vector2 PlayersStartPosition;
     public GameObject TitleScreen;
+    public GameObject GameScreen;
     public Text EnemiesDestroyedCounterText;
 
     private GameObject[] _spawnPoints;
@@ -137,6 +138,7 @@ public class GameManager : MonoBehaviour
     private void StartNewGame()
     {
         TitleScreen.SetActive(false);
+        GameScreen.SetActive(true);
         GameState = GameState.GameOn;
         _player.SetStartGameValues(StartPlayerHealth);
         _player.gameObject.SetActive(true);
@@ -151,6 +153,7 @@ public class GameManager : MonoBehaviour
     private void GameOver()
     {
         TitleScreen.SetActive(true);
+        GameScreen.SetActive(false);
         GameState = GameState.GameOver;
         while (_enemiesOnMap.Count > 0)
         {
