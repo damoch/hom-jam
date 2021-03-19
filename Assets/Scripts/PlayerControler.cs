@@ -89,6 +89,12 @@ public class PlayerControler : Character
 
     public override void UpdateHealthValue(int hitpoints)
     {
+        if (hitpoints > 0 && HealthPoints < MaxHealthPoints && HealthPoints + hitpoints > MaxHealthPoints)
+        {
+            HealthPoints = MaxHealthPoints;
+            UpdatePlayerLife();
+            return;
+        }
         HealthPoints += hitpoints;
         if (HealthPoints > MaxHealthPoints || HealthPoints < MinHealthPoints)
         {

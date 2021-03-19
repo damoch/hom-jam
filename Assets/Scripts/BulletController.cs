@@ -7,6 +7,7 @@ public class BulletController : MonoBehaviour
     public List<string> DestroyOnHitTags;
     public List<string> PenatrableTags;
     public Rigidbody2D rigidbody;
+    public GameObject BulletHit;
     public float speed;
     public int hitPoints;
 
@@ -36,7 +37,7 @@ public class BulletController : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         var tag = other.tag.ToUpper();
-
+        Instantiate(BulletHit, transform.position, transform.rotation);
         if (HitableTags.Contains(tag))
         {
             other.gameObject.GetComponent<Character>().UpdateHealthValue(-hitPoints);
