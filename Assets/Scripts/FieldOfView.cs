@@ -1,14 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FieldOfView : MonoBehaviour
 {
 
-    private EnemyController enemyController;
+    public EnemyController enemyController;
     void Start()
     {
-        enemyController = transform.parent.gameObject.GetComponent<EnemyController>();
+        if (!enemyController)
+        {
+            enemyController = transform.parent.gameObject.GetComponent<EnemyController>();
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)

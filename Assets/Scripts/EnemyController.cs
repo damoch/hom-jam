@@ -8,14 +8,10 @@ using UnityEngine;
 
 public class EnemyController : Character
 {
-    public GameObject Bullet;
+    public bool Stationary;
     public GameObject target;
     public float speed;
-    public float ShootingTimeMin;
-    public float ShootingTimeMax;
-    public float nextWaypointDistance; 
-    public float newPathSpan;
-
+    public bool IgnoreCollisionsWithPlayer;
     private float speedTemp;
     private bool enemyInRange;
     private GameManager _gameManager;
@@ -33,9 +29,17 @@ public class EnemyController : Character
             target = GameObject.FindGameObjectWithTag("Player");
         }
 
-        Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(),
-            target.gameObject.GetComponent<BoxCollider2D>());
-        
+        if (IgnoreCollisionsWithPlayer)
+        {
+            Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(),
+                target.gameObject.GetComponent<BoxCollider2D>());
+        }
+
+        if(BaseObject == null)
+        {
+            BaseObject = gameObject;
+        }
+
     }
 
     void Update()
@@ -46,12 +50,16 @@ public class EnemyController : Character
         }
         _weapon.CheckFire(enemyInRange);
         FaceEnemy();
+        if (Stationary)
+        {
+            return;
+        }
         Vector3 dir = Vector2.up;
         dir *= speed * Time.fixedDeltaTime;
         gameObject.transform.Translate(dir);
     }
 
-    void FaceEnemy()
+    private void FaceEnemy()
     {
         var dir = target.transform.position - transform.position;
         var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg -90f;
@@ -85,5 +93,10 @@ public class EnemyController : Character
             _gameManager.NotifyEnemyDestroyed(this);
 
         }
+    }
+
+    internal void OnDestruction()
+    {
+        Destroy(BaseObject);
     }
 }

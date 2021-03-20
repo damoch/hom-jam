@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
+    [RequireComponent(typeof(AudioSource))]
     public class AutoWeaponComponent : MonoBehaviour
     {
         [Range(0, 10)]

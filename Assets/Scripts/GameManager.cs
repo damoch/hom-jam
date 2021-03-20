@@ -19,10 +19,13 @@ public class GameManager : MonoBehaviour
     [Range(0f, 0.1f)]
     public float ChanceFactor;
 
-    [Range(1, 100)]
+    [Range(0, 100)]
     public int MaxEnemies;
 
-    [Range(1, 100)]
+    [Range(0, 100)]
+    public int MaxTowers;
+
+    [Range(0, 100)]
     public int MaxHealthPacks;
 
     [Range(1, 100)]
@@ -42,6 +45,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject EnemyPrefab;
     public GameObject HealthPackPrefab;
+    public GameObject EnemyTowerPrefab;
     public string LoseSceneName;
     public GameState GameState;
     public KeyCode StartNewGameKey;
@@ -49,6 +53,7 @@ public class GameManager : MonoBehaviour
     public GameObject TitleScreen;
     public GameObject GameScreen;
     public Text EnemiesDestroyedCounterText;
+    public bool DisableSpawns;
 
     private GameObject[] _spawnPoints;
     private PlayerControler _player;
@@ -60,6 +65,7 @@ public class GameManager : MonoBehaviour
     private int _enemiesDestroyed;
     private float _elapsedGameOverSlowdownFrames;
     private float _timeScaleDropEveryFrame;
+    private int _towersCount;
 
     private void Awake()
     {
@@ -70,6 +76,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        _towersCount = 0;
         _medkitsCount = 0;
         _enemyCount = 0;
         _elapsedFreezeFrames = 0;
@@ -112,12 +119,17 @@ public class GameManager : MonoBehaviour
 
     private void UpdateGamePlay()
     {
-        if (_enemyCount < MaxEnemies)
+        if (_enemyCount < MaxEnemies && !DisableSpawns)
         {
             _enemyCount++;
             _enemiesOnMap.Add(SpawnObjectsRandomly(EnemyPrefab, ChanceToSpawnEnemy).GetComponent<EnemyController>());
         }
-        if (_medkitsCount < MaxHealthPacks)
+        if (_towersCount < MaxTowers && !DisableSpawns)
+        {
+            _towersCount++;
+            _enemiesOnMap.Add(SpawnObjectsRandomly(EnemyTowerPrefab, ChanceToSpawnEnemy).GetComponentInChildren<EnemyController>());
+        }
+        if (_medkitsCount < MaxHealthPacks && !DisableSpawns)
         {
             _medkitsCount++;
             SpawnObjectsRandomly(HealthPackPrefab, ChanceToSpawnHealthPack).GetComponent<HealthPack>().MoveToPlayer(_player);
@@ -195,10 +207,19 @@ public class GameManager : MonoBehaviour
 
     internal void NotifyEnemyDestroyed(EnemyController enemy)
     {
+        //TODO: More differences between enemies
+
         _enemiesDestroyed++;
         SetEnemiesDestroyedText();
         _enemiesOnMap.Remove(enemy);
-        Destroy(enemy.gameObject);
-        _enemyCount--;
+        if (enemy.Stationary)
+        {
+            _towersCount--;
+        }
+        else
+        {
+            _enemyCount--;
+        }
+        enemy.OnDestruction();
     }
 }

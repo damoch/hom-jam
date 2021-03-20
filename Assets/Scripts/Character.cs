@@ -6,6 +6,7 @@ public abstract class Character : MonoBehaviour
 {
     [Range(0, 100)]
     public int HealthPoints;
+    public GameObject BaseObject;
 
     public abstract void UpdateHealthValue(int hitpoints);
 
