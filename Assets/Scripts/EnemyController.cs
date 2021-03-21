@@ -55,7 +55,7 @@ public class EnemyController : Character
             return;
         }
         Vector3 dir = Vector2.up;
-        dir *= speed * Time.fixedDeltaTime;
+        dir *= speed * Time.deltaTime;
         gameObject.transform.Translate(dir);
     }
 

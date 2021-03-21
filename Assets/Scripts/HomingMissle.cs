@@ -24,7 +24,7 @@ namespace Assets.Scripts
             }
             FaceEnemy();
             Vector3 dir = Vector2.up;
-            dir *= Speed * Time.fixedDeltaTime;
+            dir *= Speed * Time.deltaTime;
             gameObject.transform.Translate(dir);
         }
 
