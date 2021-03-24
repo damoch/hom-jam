@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class EnemyController : Character
 {
+    public GameObject DeathAnimation;
     public bool Stationary;
     public GameObject target;
     public float speed;
@@ -90,6 +91,10 @@ public class EnemyController : Character
         HealthPoints += hitpoints;
         if (HealthPoints < 0)
         {
+            if(DeathAnimation != null)
+            {
+                Instantiate(DeathAnimation, transform.position, transform.rotation);
+            }
             _gameManager.NotifyEnemyDestroyed(this);
 
         }
