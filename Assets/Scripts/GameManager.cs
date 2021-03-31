@@ -54,6 +54,7 @@ public class GameManager : MonoBehaviour
     public GameObject GameScreen;
     public Text EnemiesDestroyedCounterText;
     public bool DisableSpawns;
+    public GameObject PlayerBoom;
 
     private GameObject[] _spawnPoints;
     private PlayerControler _player;
@@ -159,6 +160,7 @@ public class GameManager : MonoBehaviour
     public void BeginGameOver()
     {
         Time.timeScale = GameOverSlowdownTimeScaleBegin;
+        Instantiate(PlayerBoom, _player.gameObject.transform.position, _player.gameObject.transform.rotation);
         GameState = GameState.GameOverSlowdown;
     }
 

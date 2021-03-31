@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts;
+using Assets.Scripts.Enums;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,6 +29,7 @@ public class PlayerControler : Character
     public Slider HealthSlider;
     private Animator _animator;
     private AutoWeaponComponent _autoWeapon;
+    private SpriteRenderer _spriteRenderer;
 
     private void Start()
     {
@@ -37,6 +39,7 @@ public class PlayerControler : Character
         _animationSpeed = _animator.speed;
         _animator.speed = 0f;
         _autoWeapon = GetComponent<AutoWeaponComponent>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
         HealthSlider.maxValue = MaxHealthPoints;
         HealthSlider.minValue = MinHealthPoints;
     }
@@ -89,6 +92,10 @@ public class PlayerControler : Character
 
     public override void UpdateHealthValue(int hitpoints)
     {
+        if(GameManager.GameState != GameState.GameOn)
+        {
+            return;
+        }
         if (hitpoints > 0 && HealthPoints < MaxHealthPoints && HealthPoints + hitpoints > MaxHealthPoints)
         {
             HealthPoints = MaxHealthPoints;
@@ -99,6 +106,7 @@ public class PlayerControler : Character
         if (HealthPoints > MaxHealthPoints || HealthPoints < MinHealthPoints)
         {
             _autoWeapon.ResetWeapon();
+            _spriteRenderer.enabled = false;
             GameManager.BeginGameOver();
         }
         UpdatePlayerLife();
@@ -108,6 +116,7 @@ public class PlayerControler : Character
     {
         HealthPoints = startPlayerHealth;
         UpdatePlayerLife();
+        _spriteRenderer.enabled = true;
     }
 }
 
