@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Enums;
+﻿using Assets.Scripts;
+using Assets.Scripts.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,7 @@ public class GameManager : MonoBehaviour
     public Text EnemiesDestroyedCounterText;
     public bool DisableSpawns;
     public GameObject PlayerBoom;
+    public MusicController MusicController;
 
     private GameObject[] _spawnPoints;
     private PlayerControler _player;
@@ -155,6 +157,7 @@ public class GameManager : MonoBehaviour
         GameState = GameState.GameOn;
         _player.SetStartGameValues(StartPlayerHealth);
         _player.gameObject.SetActive(true);
+        MusicController.PlayInGameMusic();
     }
 
     public void BeginGameOver()
@@ -169,6 +172,7 @@ public class GameManager : MonoBehaviour
         TitleScreen.SetActive(true);
         GameScreen.SetActive(false);
         GameState = GameState.GameOver;
+        DestroyAllHomingProjectiles();
         while (_enemiesOnMap.Count > 0)
         {
             NotifyEnemyDestroyed(_enemiesOnMap.First());
@@ -177,6 +181,17 @@ public class GameManager : MonoBehaviour
         _player.gameObject.SetActive(false);
         _enemiesDestroyed = 0;
         SetEnemiesDestroyedText();
+        MusicController.PlayMenuMusic();
+    }
+
+    private void DestroyAllHomingProjectiles()
+    {
+        var projectiles = FindObjectsOfType<HomingMissle>();
+
+        foreach (var item in projectiles)
+        {
+            Destroy(item.gameObject);
+        }
     }
 
     private void SetEnemiesDestroyedText()
