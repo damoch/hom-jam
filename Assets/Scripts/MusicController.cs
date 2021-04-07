@@ -12,6 +12,7 @@ namespace Assets.Scripts
 
         private AudioSource _audioSource;
         private float _baseVolume;
+        private float _volumeDropPerSecond;
 
         private void Start()
         {

@@ -57,6 +57,8 @@ public class GameManager : MonoBehaviour
     public bool DisableSpawns;
     public GameObject PlayerBoom;
     public MusicController MusicController;
+    public Text HiScoreText;
+    public GameObject NewRecordText;
 
     private GameObject[] _spawnPoints;
     private PlayerControler _player;
@@ -69,6 +71,7 @@ public class GameManager : MonoBehaviour
     private float _elapsedGameOverSlowdownFrames;
     private float _timeScaleDropEveryFrame;
     private int _towersCount;
+    private int _hiScore;
 
     private void Awake()
     {
@@ -85,6 +88,12 @@ public class GameManager : MonoBehaviour
         _elapsedFreezeFrames = 0;
         _inFreezeFrame = false;
         _timeScaleDropEveryFrame = (GameOverSlowdownTimeScaleBegin - GameOverSlowdownTimeScaleEnd) / GameOverSlowdownLengthFrames;
+
+        if (PlayerPrefs.HasKey(PlayerPrefsKeys.HiScore.ToString()))
+        {
+            _hiScore = PlayerPrefs.GetInt(PlayerPrefsKeys.HiScore.ToString());
+        }
+
         GameOver();
     }
 
@@ -158,6 +167,7 @@ public class GameManager : MonoBehaviour
         _player.SetStartGameValues(StartPlayerHealth);
         _player.gameObject.SetActive(true);
         MusicController.PlayInGameMusic();
+        NewRecordText.SetActive(false);
     }
 
     public void BeginGameOver()
@@ -179,9 +189,20 @@ public class GameManager : MonoBehaviour
         }
         _player.transform.position = PlayersStartPosition;
         _player.gameObject.SetActive(false);
+        CheckHiScore();
         _enemiesDestroyed = 0;
         SetEnemiesDestroyedText();
         MusicController.PlayMenuMusic();
+    }
+
+    private void CheckHiScore()
+    {
+        if(_hiScore < _enemiesDestroyed)
+        {
+            _hiScore = _enemiesDestroyed;
+            PlayerPrefs.SetInt(PlayerPrefsKeys.HiScore.ToString(), _hiScore);
+        }
+        HiScoreText.text = _hiScore.ToString();
     }
 
     private void DestroyAllHomingProjectiles()
@@ -197,6 +218,10 @@ public class GameManager : MonoBehaviour
     private void SetEnemiesDestroyedText()
     {
         EnemiesDestroyedCounterText.text = _enemiesDestroyed.ToString();
+        if(_enemiesDestroyed> _hiScore)
+        {
+            NewRecordText.SetActive(true);
+        }
     }
 
     public void FreezeFrame()
