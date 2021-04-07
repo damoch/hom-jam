@@ -14,9 +14,13 @@ namespace Assets.Scripts
         private float _baseVolume;
         private float _volumeDropPerSecond;
 
-        private void Start()
+        private void Awake()
         {
             _audioSource = GetComponent<AudioSource>();
+        }
+
+        private void Start()
+        {
             _baseVolume = _audioSource.volume;
         }
 

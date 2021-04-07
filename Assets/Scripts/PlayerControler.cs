@@ -31,15 +31,20 @@ public class PlayerControler : Character
     private AutoWeaponComponent _autoWeapon;
     private SpriteRenderer _spriteRenderer;
 
-    private void Start()
+    private void Awake()
     {
+        _autoWeapon = GetComponent<AutoWeaponComponent>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
         _rigidboy = GetComponent<Rigidbody2D>();
 
+    }
+
+    private void Start()
+    {
+
         _animationSpeed = _animator.speed;
         _animator.speed = 0f;
-        _autoWeapon = GetComponent<AutoWeaponComponent>();
-        _spriteRenderer = GetComponent<SpriteRenderer>();
         HealthSlider.maxValue = MaxHealthPoints;
         HealthSlider.minValue = MinHealthPoints;
     }

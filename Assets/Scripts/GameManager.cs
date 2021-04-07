@@ -134,12 +134,16 @@ public class GameManager : MonoBehaviour
         if (_enemyCount < MaxEnemies && !DisableSpawns)
         {
             _enemyCount++;
-            _enemiesOnMap.Add(SpawnObjectsRandomly(EnemyPrefab, ChanceToSpawnEnemy).GetComponent<EnemyController>());
+            var enemy = SpawnObjectsRandomly(EnemyPrefab, ChanceToSpawnEnemy).GetComponent<EnemyController>();
+            enemy.SetTarget(_player.gameObject);
+            _enemiesOnMap.Add(enemy);
         }
         if (_towersCount < MaxTowers && !DisableSpawns)
         {
             _towersCount++;
-            _enemiesOnMap.Add(SpawnObjectsRandomly(EnemyTowerPrefab, ChanceToSpawnEnemy).GetComponentInChildren<EnemyController>());
+            var tower = SpawnObjectsRandomly(EnemyTowerPrefab, ChanceToSpawnEnemy).GetComponentInChildren<EnemyController>();
+            tower.SetTarget(_player.gameObject);
+            _enemiesOnMap.Add(tower);
         }
         if (_medkitsCount < MaxHealthPacks && !DisableSpawns)
         {

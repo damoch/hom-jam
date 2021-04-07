@@ -10,7 +10,7 @@ public class EnemyController : Character
 {
     public GameObject DeathAnimation;
     public bool Stationary;
-    public GameObject target;
+    public GameObject _target;
     public float speed;
     public bool IgnoreCollisionsWithPlayer;
     private float speedTemp;
@@ -24,17 +24,6 @@ public class EnemyController : Character
         _weapon = GetComponent<AutoWeaponComponent>();
         enemyInRange = false;
         speedTemp = speed;
-
-        if (target == null)
-        {
-            target = GameObject.FindGameObjectWithTag("Player");
-        }
-
-        if (IgnoreCollisionsWithPlayer)
-        {
-            Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(),
-                target.gameObject.GetComponent<BoxCollider2D>());
-        }
 
         if(BaseObject == null)
         {
@@ -62,7 +51,7 @@ public class EnemyController : Character
 
     private void FaceEnemy()
     {
-        var dir = target.transform.position - transform.position;
+        var dir = _target.transform.position - transform.position;
         var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg -90f;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
@@ -103,5 +92,17 @@ public class EnemyController : Character
     internal void OnDestruction()
     {
         Destroy(BaseObject);
+    }
+
+    public void SetTarget(GameObject target)
+    {
+        _target = target;
+
+
+        if (IgnoreCollisionsWithPlayer)
+        {
+            Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(),
+                _target.gameObject.GetComponent<BoxCollider2D>());
+        }
     }
 }
