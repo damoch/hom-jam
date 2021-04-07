@@ -8,6 +8,13 @@ namespace Assets.Scripts
         public float Speed;
         public int Hitpoints;
 
+        private TrailRenderer _trail;
+
+        private void Awake()
+        {
+            _trail = GetComponentInChildren<TrailRenderer>();
+        }
+
         private void Start()
         {
             if(Target == null)
@@ -37,8 +44,10 @@ namespace Assets.Scripts
 
         void OnTriggerEnter2D(Collider2D other)
         {
-            if(other.tag == "Bullet")
+            if (other.tag == "Bullet")
             {
+                _trail.transform.parent = null;
+                _trail.autodestruct = true;
                 Destroy(gameObject);
             }
             var enemy = other.gameObject;
@@ -46,6 +55,8 @@ namespace Assets.Scripts
             //Instantiate(BulletHit, transform.position, transform.rotation);
             if(enemy == Target)
             {
+                _trail.transform.parent = null;
+                _trail.autodestruct = true;
                 enemy.GetComponent<Character>().UpdateHealthValue(-Hitpoints);
                 Destroy(gameObject);
             }
