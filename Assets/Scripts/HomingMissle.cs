@@ -7,6 +7,7 @@ namespace Assets.Scripts
         public GameObject Target;
         public float Speed;
         public int Hitpoints;
+        public GameObject MissileHit;
 
         private TrailRenderer _trail;
 
@@ -48,6 +49,7 @@ namespace Assets.Scripts
             {
                 _trail.transform.parent = null;
                 _trail.autodestruct = true;
+                Instantiate(MissileHit, transform.position, transform.rotation);
                 Destroy(gameObject);
             }
             var enemy = other.gameObject;
@@ -58,6 +60,7 @@ namespace Assets.Scripts
                 _trail.transform.parent = null;
                 _trail.autodestruct = true;
                 enemy.GetComponent<Character>().UpdateHealthValue(-Hitpoints);
+                Instantiate(MissileHit, transform.position, transform.rotation);
                 Destroy(gameObject);
             }
         }
