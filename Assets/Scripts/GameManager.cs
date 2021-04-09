@@ -50,6 +50,7 @@ public class GameManager : MonoBehaviour
     public string LoseSceneName;
     public GameState GameState;
     public KeyCode StartNewGameKey;
+    public KeyCode ExitGameKey;
     public Vector2 PlayersStartPosition;
     public GameObject TitleScreen;
     public GameObject GameScreen;
@@ -59,6 +60,7 @@ public class GameManager : MonoBehaviour
     public MusicController MusicController;
     public Text HiScoreText;
     public GameObject NewRecordText;
+    public Text VersionText;
 
     private GameObject[] _spawnPoints;
     private PlayerControler _player;
@@ -93,7 +95,7 @@ public class GameManager : MonoBehaviour
         {
             _hiScore = PlayerPrefs.GetInt(PlayerPrefsKeys.HiScore.ToString());
         }
-
+        VersionText.text += Application.version;
         GameOver();
     }
 
@@ -115,6 +117,16 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
+        if (Input.GetKey(ExitGameKey))
+        {
+            ExitGame();
+        }
+
+    }
+
+    private void ExitGame()
+    {
+        Application.Quit();
     }
 
     private void UpdateSlowdown()
