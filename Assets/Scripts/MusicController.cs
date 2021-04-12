@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
@@ -12,6 +13,7 @@ namespace Assets.Scripts
     {
         public AudioClip MenuMusic;
         public AudioClip InGameMusic;
+        public Text LoadedTracksText;
 
         [Range(0f,10f)]
         public float FadeInLength;
@@ -65,6 +67,7 @@ namespace Assets.Scripts
                         {
                             clip = DownloadHandlerAudioClip.GetContent(uwr);
                             _customMusic.Add(clip);
+                            LoadedTracksText.text += file + Environment.NewLine;
                         }
                     }
                     catch (Exception err)
@@ -73,17 +76,16 @@ namespace Assets.Scripts
                     }
                 }
             }
+            if (_customMusic.Any())
+            {
+                LoadedTracksText.gameObject.SetActive(true);
+            }
         }
 
         private async void Start()
         {
             _baseVolume = _audioSource.volume;
             TryLoadAudioFile();
-        }
-
-        private void Update()
-        {
-
         }
 
         public void PlayMenuMusic()
@@ -94,7 +96,9 @@ namespace Assets.Scripts
 
         public void PlayInGameMusic()
         {
-            if(_customMusic.Count > 0)
+            
+            LoadedTracksText.gameObject.SetActive(false);
+            if (_customMusic.Count > 0)
             {
                 if(_currentTrackIndex > _customMusic.Count - 1)
                 {
