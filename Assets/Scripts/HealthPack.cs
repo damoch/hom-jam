@@ -6,13 +6,11 @@ public class HealthPack : MonoBehaviour {
     public float Speed;
 
     private GameManager gameManager;
-    private Rigidbody2D _rb;
     private Vector3 _playerPosition;
 
     private void Awake()
     {
         gameManager = FindObjectOfType<GameManager>();
-        _rb = GetComponent<Rigidbody2D>();
     }
 
     private void Update()

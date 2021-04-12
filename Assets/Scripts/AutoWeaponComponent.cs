@@ -13,6 +13,7 @@ namespace Assets.Scripts
         public float ShootCooldownOverheat;
         [Range(0, 200)]
         public float MaxWeaponHeat;
+
         [Range(0, 200)]
         public float MinWeaponHeat;
         [Range(0, 200)]
@@ -98,6 +99,15 @@ namespace Assets.Scripts
         {
             _currentWeaponHeat = MinWeaponHeat;
             WeaponOverheat = false;
+            UpdateHeatingSlider();
+        }
+        internal void CoolWeaponDownBy(int coolantValue)
+        {
+            _currentWeaponHeat -= coolantValue;
+            if(_currentWeaponHeat < 0)
+            {
+                _currentWeaponHeat = 0;
+            }
             UpdateHeatingSlider();
         }
     }

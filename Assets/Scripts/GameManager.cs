@@ -198,7 +198,8 @@ public class GameManager : MonoBehaviour
         TitleScreen.SetActive(true);
         GameScreen.SetActive(false);
         GameState = GameState.GameOver;
-        DestroyAllHomingProjectiles();
+        DestroyAllProjectiles();
+        DestroyAllPowerUpPacks();
         while (_enemiesOnMap.Count > 0)
         {
             NotifyEnemyDestroyed(_enemiesOnMap.First());
@@ -211,6 +212,25 @@ public class GameManager : MonoBehaviour
         MusicController.PlayMenuMusic();
     }
 
+    private void DestroyAllPowerUpPacks()
+    {
+        var healthPacks = FindObjectsOfType<HealthPack>();
+        var coolantPacks = FindObjectsOfType<CoolantObjectController>();
+
+
+        foreach (var hp in healthPacks)
+        {
+            Destroy(hp.gameObject);
+        }
+
+        foreach (var cp in coolantPacks)
+        {
+            Destroy(cp.gameObject);
+        }
+
+        _medkitsCount = 0;
+    }
+
     private void CheckHiScore()
     {
         if(_hiScore < _enemiesDestroyed)
@@ -221,13 +241,27 @@ public class GameManager : MonoBehaviour
         HiScoreText.text = _hiScore.ToString();
     }
 
-    private void DestroyAllHomingProjectiles()
+    private void DestroyAllProjectiles()
     {
         var projectiles = FindObjectsOfType<HomingMissle>();
 
         foreach (var item in projectiles)
         {
             Destroy(item.gameObject);
+        }
+
+        var trails = FindObjectsOfType<TrailRenderer>();
+
+        foreach (var trail in trails)
+        {
+            Destroy(trail.gameObject);
+        }
+
+        var bullets = FindObjectsOfType<BulletController>();
+
+        foreach (var bullet in bullets)
+        {
+            Destroy(bullet.gameObject);
         }
     }
 

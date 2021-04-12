@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class EnemyController : Character
 {
+    public GameObject CoolantObject;
     public GameObject DeathAnimation;
     public bool Stationary;
     public GameObject _target;
@@ -84,6 +85,12 @@ public class EnemyController : Character
             {
                 Instantiate(DeathAnimation, transform.position, transform.rotation);
             }
+
+            if(CoolantObject != null)
+            {
+                Instantiate(CoolantObject, transform.position, transform.rotation);
+            }
+
             _gameManager.NotifyEnemyDestroyed(this);
 
         }
