@@ -25,6 +25,7 @@ public class EnemyController : Character
         FindTarget();
         _gameManager = FindObjectOfType<GameManager>();
         _weapon = GetComponent<AutoWeaponComponent>();
+        _weapon.Team = Team;
         enemyInRange = false;
         speedTemp = speed;
 
@@ -38,7 +39,7 @@ public class EnemyController : Character
     private void FindTarget()
     {
         var t = FindObjectsOfType<Character>().FirstOrDefault(x => x.Team.Name != Team.Name);
-        if(t == null)
+        if (t == null)
         {
             return;
         }
@@ -53,7 +54,7 @@ public class EnemyController : Character
         }
         _weapon.CheckFire(enemyInRange, _target);
         FaceEnemy();
-        if (Stationary)
+        if (Stationary || _target == null)
         {
             return;
         }
@@ -75,7 +76,7 @@ public class EnemyController : Character
 
     public void TriggerEnter(Collider2D other)
     {
-        var ec = other.gameObject.GetComponent<EnemyController>();
+        var ec = other.gameObject.GetComponent<Character>();
         if (ec != null && ec.Team.Name != Team.Name)
         {
             _target = other.gameObject;

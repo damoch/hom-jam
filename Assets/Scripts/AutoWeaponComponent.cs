@@ -27,6 +27,7 @@ namespace Assets.Scripts
         public GameObject BulletPrefab;
         public GameObject BulletSpawnPoint;
         public AudioClip ShootAudioClip;
+        public Team Team;
 
         private float _elapsedCooldown;
         private float _currentWeaponHeat;
@@ -89,6 +90,7 @@ namespace Assets.Scripts
 
             if (homing != null)
             {
+                homing.Team = Team;
                 homing.Target = target;
             }
 

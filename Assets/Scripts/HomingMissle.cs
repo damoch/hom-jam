@@ -8,6 +8,7 @@ namespace Assets.Scripts
         public float Speed;
         public int Hitpoints;
         public GameObject MissileHit;
+        public Team Team;
 
         private TrailRenderer _trail;
 
@@ -47,7 +48,7 @@ namespace Assets.Scripts
             var enemy = other.gameObject.GetComponent<Character>();
 
             //Instantiate(BulletHit, transform.position, transform.rotation);
-            if(enemy != null)
+            if(enemy != null && enemy.Team.Name != Team.Name)
             {
                 _trail.transform.parent = null;
                 _trail.autodestruct = true;
@@ -55,12 +56,15 @@ namespace Assets.Scripts
                 Instantiate(MissileHit, transform.position, transform.rotation);
                 Destroy(gameObject);
             }
+            if(other.tag == "Boundary")
+            {
 
+                _trail.transform.parent = null;
+                _trail.autodestruct = true;
+                Instantiate(MissileHit, transform.position, transform.rotation);
+                Destroy(gameObject);
+            }
 
-            _trail.transform.parent = null;
-            _trail.autodestruct = true;
-            Instantiate(MissileHit, transform.position, transform.rotation);
-            Destroy(gameObject);
         }
 
         
