@@ -38,9 +38,10 @@ public class BulletController : MonoBehaviour
     {
         var tag = other.tag.ToUpper();
         Instantiate(BulletHit, transform.position, transform.rotation);
-        if (HitableTags.Contains(tag))
+        var otherCharacter = other.gameObject.GetComponent<Character>();
+        if (otherCharacter != null)
         {
-            other.gameObject.GetComponent<Character>().UpdateHealthValue(-hitPoints);
+            otherCharacter.UpdateHealthValue(-hitPoints);
             Destroy(gameObject);
         }
         if (PenatrableTags.Contains(tag))

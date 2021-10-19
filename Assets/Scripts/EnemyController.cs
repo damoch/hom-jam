@@ -42,7 +42,7 @@ public class EnemyController : Character
         {
             return;
         }
-        _target = t.gameObject;
+        SetTarget(t.gameObject);
     }
 
     void Update()
@@ -51,7 +51,7 @@ public class EnemyController : Character
         {
             _weapon.CheckCanShoot();
         }
-        _weapon.CheckFire(enemyInRange);
+        _weapon.CheckFire(enemyInRange, _target);
         FaceEnemy();
         if (Stationary)
         {
@@ -75,8 +75,10 @@ public class EnemyController : Character
 
     public void TriggerEnter(Collider2D other)
     {
-        if (other.tag.Equals("Player"))
+        var ec = other.gameObject.GetComponent<EnemyController>();
+        if (ec != null && ec.Team.Name != Team.Name)
         {
+            _target = other.gameObject;
             enemyInRange = true;
             speed = 0;
         }
@@ -84,7 +86,7 @@ public class EnemyController : Character
 
     public void TriggerExit(Collider2D other)
     {
-        if (other.tag.Equals("Player"))
+        if (other.gameObject == _target)
         {
             enemyInRange = false;
             speed = speedTemp;
@@ -117,7 +119,7 @@ public class EnemyController : Character
         Destroy(BaseObject);
     }
 
-    public void SetTarget(GameObject target)
+    private void SetTarget(GameObject target)
     {
         _target = target;
 
@@ -128,4 +130,13 @@ public class EnemyController : Character
                 _target.gameObject.GetComponent<BoxCollider2D>());
         }
     }
+
+    public void SetTeam(Team team)
+    {
+        Team = team;
+        GetComponent<SpriteRenderer>().color = team.Color;
+        FindTarget();
+    }
+
+
 }

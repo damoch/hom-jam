@@ -146,21 +146,23 @@ public class GameManager : MonoBehaviour
         if (_enemyCount < MaxEnemies && !DisableSpawns)
         {
             _enemyCount++;
-            var enemy = SpawnObjectsRandomly(EnemyPrefab, ChanceToSpawnEnemy).GetComponent<EnemyController>();
-            enemy.SetTarget(_player.gameObject);
+            var result = SpawnObjectsRandomly(EnemyPrefab, ChanceToSpawnEnemy);
+            var enemy = result.Item1.GetComponent<EnemyController>();
+            enemy.SetTeam(result.Item2.Team);
             _enemiesOnMap.Add(enemy);
         }
         if (_towersCount < MaxTowers && !DisableSpawns)
         {
             _towersCount++;
-            var tower = SpawnObjectsRandomly(EnemyTowerPrefab, ChanceToSpawnEnemy).GetComponentInChildren<EnemyController>();
-            tower.SetTarget(_player.gameObject);
+            var result = SpawnObjectsRandomly(EnemyTowerPrefab, ChanceToSpawnEnemy);
+            var tower = result.Item1.GetComponentInChildren<EnemyController>();
+            tower.SetTeam(result.Item2.Team);
             _enemiesOnMap.Add(tower);
         }
         if (_medkitsCount < MaxHealthPacks && !DisableSpawns)
         {
             _medkitsCount++;
-            SpawnObjectsRandomly(HealthPackPrefab, ChanceToSpawnHealthPack).GetComponent<HealthPack>().MoveToPlayer(_player);
+            SpawnObjectsRandomly(HealthPackPrefab, ChanceToSpawnHealthPack).Item1.GetComponent<HealthPack>().MoveToPlayer(_player);
         }
         if (_inFreezeFrame)
         {
@@ -289,12 +291,13 @@ public class GameManager : MonoBehaviour
         _medkitsCount--;
     }
 
-    private GameObject SpawnObjectsRandomly(GameObject prefab, float chanceToSpawn)
+    private Tuple<GameObject, SpawnPoint> SpawnObjectsRandomly(GameObject prefab, float chanceToSpawn)
     {
         System.Random rnd = new System.Random();
         int index = rnd.Next(_spawnPoints.Length);
         Vector3 position = _spawnPoints[index].transform.position;
-        return Instantiate(prefab, position, Quaternion.identity);
+        var sp = _spawnPoints[index].GetComponent<SpawnPoint>();
+        return new Tuple<GameObject, SpawnPoint>(Instantiate(prefab, position, Quaternion.identity), sp);
     }
 
     internal void NotifyEnemyDestroyed(EnemyController enemy)

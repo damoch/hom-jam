@@ -55,11 +55,11 @@ namespace Assets.Scripts
             }
         }
 
-        public void CheckFire(bool triggerFired)
+        public void CheckFire(bool triggerFired, GameObject target = null)
         {
             if (triggerFired && CanShoot && !WeaponOverheat)
             {
-                Shoot();
+                Shoot(target);
                 return;
             }
             if (_currentWeaponHeat > MinWeaponHeat)
@@ -81,9 +81,17 @@ namespace Assets.Scripts
             }
         }
 
-        private void Shoot()
+        private void Shoot(GameObject target = null)
         {
-            Instantiate(BulletPrefab, BulletSpawnPoint.transform.position, transform.rotation);
+            var bullet = Instantiate(BulletPrefab, BulletSpawnPoint.transform.position, transform.rotation);
+
+            var homing = bullet.GetComponent<HomingMissle>();
+
+            if (homing != null)
+            {
+                homing.Target = target;
+            }
+
             _audioSource.PlayOneShot(ShootAudioClip);
             CanShoot = false;
 

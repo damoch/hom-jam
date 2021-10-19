@@ -16,21 +16,20 @@ namespace Assets.Scripts
             _trail = GetComponentInChildren<TrailRenderer>();
         }
 
-        private void Start()
-        {
-            if(Target == null)
-            {
-                Target = FindObjectOfType<PlayerControler>().gameObject;
-            }
-        }
+        //private void Start()
+        //{
+        //    if(Target == null)
+        //    {
+        //        Target = FindObjectOfType<PlayerControler>().gameObject;
+        //    }
+        //}
 
         private void Update()
         {
-            if (Target == null)
+            if (Target != null)
             {
-                Destroy(gameObject);
+                FaceEnemy();
             }
-            FaceEnemy();
             Vector3 dir = Vector2.up;
             dir *= Speed * Time.deltaTime;
             gameObject.transform.Translate(dir);
@@ -45,24 +44,25 @@ namespace Assets.Scripts
 
         void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.tag == "Bullet")
-            {
-                _trail.transform.parent = null;
-                _trail.autodestruct = true;
-                Instantiate(MissileHit, transform.position, transform.rotation);
-                Destroy(gameObject);
-            }
-            var enemy = other.gameObject;
+            var enemy = other.gameObject.GetComponent<Character>();
 
             //Instantiate(BulletHit, transform.position, transform.rotation);
-            if(enemy == Target)
+            if(enemy != null)
             {
                 _trail.transform.parent = null;
                 _trail.autodestruct = true;
-                enemy.GetComponent<Character>().UpdateHealthValue(-Hitpoints);
+                enemy.UpdateHealthValue(-Hitpoints);
                 Instantiate(MissileHit, transform.position, transform.rotation);
                 Destroy(gameObject);
             }
+
+
+            _trail.transform.parent = null;
+            _trail.autodestruct = true;
+            Instantiate(MissileHit, transform.position, transform.rotation);
+            Destroy(gameObject);
         }
+
+        
     }
 }
