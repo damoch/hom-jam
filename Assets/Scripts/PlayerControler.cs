@@ -6,9 +6,7 @@ using UnityEngine.UI;
 public class PlayerControler : Character
 {
     [Range(0, 100)]
-    public float VerticalSpeed;
-    [Range(0, 100)]
-    public float HorizontalSpeed;
+    public float Speed;
     [Range(0, 100)]
     public int MaxHealthPoints;
     [Range(0, 100)]
@@ -17,11 +15,6 @@ public class PlayerControler : Character
     public int LowHealth;
     [Range(0, 100)]
     public int MinHealthPoints;
-    [Range(0, 4)]
-    public float TurningSpeed;
-
-    public KeyCode TurnLeftKey;
-    public KeyCode TurnRightKey;
 
     public GameObject BulletPrefab;
     public GameObject BulletSpawnPoint;
@@ -49,6 +42,7 @@ public class PlayerControler : Character
 
     private void Start()
     {
+
         _animationSpeed = _animator.speed;
         _animator.speed = 0f;
         HealthSlider.maxValue = MaxHealthPoints;
@@ -57,7 +51,7 @@ public class PlayerControler : Character
 
     private void Update()
     {
-        if(GameManager.GameState == GameState.GameOverSlowdown)
+        if(GameManager.GameState == Assets.Scripts.Enums.GameState.GameOverSlowdown)
         {
             return;
         }
@@ -67,7 +61,7 @@ public class PlayerControler : Character
         }
         _autoWeapon.CheckFire(Input.GetMouseButton(0));
         PlayerMoving();
-        ChangeFacingDirection();
+        ChangePlayerLookingDirection();
         UpdatePlayerLife();
     }
 
@@ -90,21 +84,15 @@ public class PlayerControler : Character
         {
             _animator.speed = 0f;
         }
-        _rigidboy.velocity = (transform.right * HorizontalSpeed * _moveX) + (transform.up * VerticalSpeed * _moveY);
+
+        _rigidboy.velocity = new Vector2(_moveX * Speed, _moveY * Speed);
     }
 
-    private void ChangeFacingDirection()
+    private void ChangePlayerLookingDirection()
     {
-        if (Input.GetKey(TurnLeftKey))
-        {
-            _rigidboy.MoveRotation(_rigidboy .rotation- TurningSpeed);
-        }
-
-        if (Input.GetKey(TurnRightKey))
-        {
-            _rigidboy.MoveRotation(_rigidboy.rotation+TurningSpeed);
-        }
-
+        _mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 direction = (_mousePosition - (Vector2)transform.position).normalized;
+        transform.up = direction;
     }
 
     public override void UpdateHealthValue(int hitpoints)
