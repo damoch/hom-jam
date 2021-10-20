@@ -1,4 +1,5 @@
-﻿using Assets.Scripts;
+﻿using Assets;
+using Assets.Scripts;
 using Assets.Scripts.Enums;
 using System;
 using System.Collections.Generic;
@@ -63,6 +64,7 @@ public class GameManager : MonoBehaviour
     public Text VersionText;
 
     private GameObject[] _spawnPoints;
+    private Rules _rules;
     private PlayerControler _player;
     private float _elapsedFreezeFrames;
     private bool _inFreezeFrame;
@@ -77,6 +79,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        _rules = new Rules();
         _player = FindObjectOfType<PlayerControler>();
         _spawnPoints = GameObject.FindGameObjectsWithTag("SpawnPoint");
         _enemiesOnMap = new List<EnemyController>();
