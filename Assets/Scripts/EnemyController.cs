@@ -1,9 +1,8 @@
 ﻿
 using Assets.Scripts;
 using System.Collections;
-using System.Linq;
 #if UNITY_EDITOR
-using UnityEditor;
+    using UnityEditor;
 #endif
 using UnityEngine;
 
@@ -22,27 +21,16 @@ public class EnemyController : Character
 
     void Start()
     {
-        FindTarget();
         _gameManager = FindObjectOfType<GameManager>();
         _weapon = GetComponent<AutoWeaponComponent>();
         enemyInRange = false;
         speedTemp = speed;
 
-        if (BaseObject == null)
+        if(BaseObject == null)
         {
             BaseObject = gameObject;
         }
 
-    }
-
-    private void FindTarget()
-    {
-        var t = FindObjectsOfType<Character>().FirstOrDefault(x => x.Team.Name != Team.Name);
-        if(t == null)
-        {
-            return;
-        }
-        _target = t.gameObject;
     }
 
     void Update()
@@ -64,10 +52,6 @@ public class EnemyController : Character
 
     private void FaceEnemy()
     {
-        if(_target == null)
-        {
-            return;
-        }
         var dir = _target.transform.position - transform.position;
         var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg -90f;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
